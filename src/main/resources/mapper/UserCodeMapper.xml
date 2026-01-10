@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 修改这里的 namespace 为正确的 Mapper 接口路径 -->
+<mapper namespace="com.example.wisper_one.Login.usercode.mapper.UserCodeMapper">
+
+    <resultMap id="UserCodeSeqResultMap" type="com.example.wisper_one.Login.usercode.UserCodeSeq">
+        <id property="id" column="id"/>
+        <result property="year" column="year"/>
+        <result property="lastSerial" column="last_serial"/>
+    </resultMap>
+
+    <select id="findByYear" resultMap="UserCodeSeqResultMap">
+        SELECT * FROM user_code_seq WHERE year = #{year}
+    </select>
+
+    <insert id="insert" parameterType="com.example.wisper_one.Login.usercode.UserCodeSeq">
+        INSERT INTO user_code_seq (year, last_serial)
+        VALUES (#{year}, #{lastSerial})
+    </insert>
+
+    <update id="update" parameterType="com.example.wisper_one.Login.usercode.UserCodeSeq">
+        UPDATE user_code_seq
+        SET last_serial = #{lastSerial}
+        WHERE year = #{year}
+    </update>
+
+</mapper>
