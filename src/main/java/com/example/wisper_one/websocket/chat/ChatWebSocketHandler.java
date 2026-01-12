@@ -5,6 +5,7 @@ import com.example.wisper_one.utils.Exception.BusinessException;
 import com.example.wisper_one.utils.ResultCode;
 import com.example.wisper_one.utils.jwt.JwtTokenUtil;
 import com.example.wisper_one.websocket.chat.POJO.ChatMessageEntity;
+import com.example.wisper_one.websocket.chat.mapper.ChatMessageMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -15,6 +16,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -54,22 +57,19 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     // HashMap的遍历顺序不是插入顺序是根据key的哈希值+桶结构来决定的
 
 
-
-
-
-
     /**
      * WebSocketSession 常用方法
-     方法	            作用
-     sendMessage(WebSocketMessage<?> message)	发送消息到客户端
-     close() 或 close(CloseStatus status)	关闭这个 WebSocket 连接
-     isOpen()	判断连接是否还打开
-     getAttributes()	获取在握手阶段设置的属性，例如 userId
-     getId()	session 的唯一 id（Spring 自动生成）
-     getRemoteAddress()	获取客户端 IP 和端口
+     * 方法	            作用
+     * sendMessage(WebSocketMessage<?> message)	发送消息到客户端
+     * close() 或 close(CloseStatus status)	关闭这个 WebSocket 连接
+     * isOpen()	判断连接是否还打开
+     * getAttributes()	获取在握手阶段设置的属性，例如 userId
+     * getId()	session 的唯一 id（Spring 自动生成）
+     * getRemoteAddress()	获取客户端 IP 和端口
      **/
 
-
+    @Resource
+    private ChatMessageMapper chatMessageMapper;
 
     private static final Map<String, WebSocketSession> ONLINE_USERS = new ConcurrentHashMap<>(); //ConcurrentHashMap 是线程安全的 HashMap 版本
 
@@ -87,7 +87,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         WebSocketSession old = ONLINE_USERS.put(userId, session);
 
-        if (old != null&&old.isOpen()) {
+        if (old != null && old.isOpen()) {
             old.sendMessage(new TextMessage("账号已经在别处登录"));
             old.close();
         }
@@ -114,6 +114,9 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         String toUserId = json.get("to").asText();
         String content = json.get("msg").asText();
+        String type = json.has("type") ? json.get("type").asText() : "text"; // 默认是文本
+
+
         if (content.isEmpty() || content.length() > 2000) {
             session.sendMessage(new TextMessage("消息内容不合法"));
             return;
@@ -131,14 +134,21 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         chatMessageEntity.setSender(fromUserId);
         chatMessageEntity.setReceiver(toUserId);
         chatMessageEntity.setContent(content);
-
-
+        chatMessageEntity.setType(type);
+        chatMessageEntity.setRevoked(0);
+        chatMessageEntity.setCreateTime(LocalDateTime.now());
+        chatMessageEntity.setRevokedAt(null);
 
 
         ObjectNode resp = mapper.createObjectNode();
         resp.put("from", fromUserId);
         resp.put("msg", content);
+        resp.put("type", type);
 
+        int rows = chatMessageMapper.insert(chatMessageEntity);
+        if (rows != 1) {
+            throw new BusinessException("实时聊天插入失败");
+        }
         //发给对方
         targetSession.sendMessage(new TextMessage(resp.toString()));
 

@@ -46,6 +46,12 @@ public class SimpleJwtFilter extends OncePerRequestFilter {
             return;
         }
 
+        //这里他妈给访问图图片放行
+        if (path.startsWith("/uploads/images/")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         //放行浏览器OPTIONS请求
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             chain.doFilter(request, response);
@@ -78,9 +84,9 @@ public class SimpleJwtFilter extends OncePerRequestFilter {
 
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
-                        username,
-                        null,
-                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                        username,  // principal，主体信息，一般是用户名或用户对象
+                        null,  // credentials，密码（JWT 已经验证过了，所以这里可以为 null）
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))  // 权限列表
                 );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

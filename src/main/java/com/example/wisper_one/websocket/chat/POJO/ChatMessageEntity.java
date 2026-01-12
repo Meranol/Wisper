@@ -27,6 +27,8 @@ public class ChatMessageEntity {
     /** 是否撤回：0-正常，1-已撤回 */
     private Integer revoked;
 
+    private String type;    // text / image
+
     /** 撤回时间 */
     private LocalDateTime revokedAt;
 

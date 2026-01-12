@@ -2,6 +2,7 @@ package com.example.wisper_one.websocket.chat.mapper;
 
 import com.example.wisper_one.websocket.chat.POJO.ChatMessageEntity;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +12,8 @@ import java.time.LocalDateTime;
  * Date: 2026/1/12
  * Description:
  */
+
+@Mapper
 public interface ChatMessageMapper {
     int insert(ChatMessageEntity entity);
     ChatMessageEntity selectLatestByReceiver(@Param("receiver") String receiver);
