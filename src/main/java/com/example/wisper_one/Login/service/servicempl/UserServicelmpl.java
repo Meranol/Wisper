@@ -1,9 +1,9 @@
 package com.example.wisper_one.Login.service.servicempl;
 
-import com.example.wisper_one.Login.DTO.request.CheckUname;
-import com.example.wisper_one.Login.DTO.request.LoginRequest;
-import com.example.wisper_one.Login.DTO.request.RegRequest;
-import com.example.wisper_one.Login.domain.User;
+import com.example.wisper_one.Login.DTO.request.CheckUnameDto;
+import com.example.wisper_one.Login.DTO.request.LoginRequestDto;
+import com.example.wisper_one.Login.DTO.request.RegRequestDto;
+import com.example.wisper_one.Login.POJO.UserPo;
 import com.example.wisper_one.Login.mapper.UserMapper;
 import com.example.wisper_one.Login.service.UserService;
 import com.example.wisper_one.Login.usercode.service.UserCodeService;
@@ -33,7 +33,7 @@ public class UserServicelmpl implements UserService {
     private UserCodeService userCodeService;
 
     @Override
-    public User register(RegRequest regRequest) {
+    public UserPo register(RegRequestDto regRequest) {
         if (userMapper.existsByUsername(regRequest.getUsername()) > 0) {
             throw new BusinessException("用户名已存在");
         }
@@ -42,7 +42,7 @@ public class UserServicelmpl implements UserService {
             throw new BusinessException("邮箱已被占用");
         }
 
-        User user = new User();
+        UserPo user = new UserPo();
         user.setUsername(regRequest.getUsername());
         user.setEmail(regRequest.getEmail());
         user.setPublicId(userCodeService.generateUserCode());
@@ -63,13 +63,13 @@ public class UserServicelmpl implements UserService {
     }
 
     @Override
-    public Boolean checkUsername(CheckUname checkUname) {
+    public Boolean checkUsername(CheckUnameDto checkUname) {
         return userMapper.existsByUsername(checkUname.getUname()) == 0;
     }
 
     @Override
-    public User login(LoginRequest loginRequest) {
-        User user = userMapper.selectUserByUsername(loginRequest.getUsername());
+    public UserPo login(LoginRequestDto loginRequest) {
+        UserPo user = userMapper.selectUserByUsername(loginRequest.getUsername());
 
         if (user == null || !passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())) {
             throw new BusinessException("用户名或密码错误");

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.websocket.chat.mapper.ChatMessageMapper">
+
+    <!-- 插入消息 -->
+    <insert id="insert"
+            parameterType="com.example.wisper_one.websocket.chat.POJO.ChatMessageEntity"
+            useGeneratedKeys="true"
+            keyProperty="id">
+#
+#         INSERT INTO chat_message
+#             (sender, receiver, content, revoked, revoked_at, create_time)
+#         VALUES
+#             (#{sender}, #{receiver}, #{content}, #{revoked}, #{revokedAt}, #{createTime})
+        INSERT INTO chat_message(SENDER, RECEIVER, CONTENT, REVOKED, REVOKED_AT, CREATE_TIME) VALUES
+                (#{sender}, #{receiver}, #{content}, #{revoked}, #{revokedAt}, #{createTime})
+    </insert>
+
+    <!-- 根据 id 查询聊天记录 -->
+    <select id="selectById" resultType="com.example.wisper_one.websocket.chat.POJO.ChatMessageEntity">
+#         SELECT
+#             id,
+#             sender,
+#             receiver,
+#             content,
+#             revoked,
+#             revoked_at AS revokedAt,
+#             create_time AS createTime
+#         FROM chat_message
+#         WHERE id = #{id}
+
+    SELECT   id,
+            sender,
+            receiver,
+            content,
+            revoked,
+            revoked_at AS revokedAt,
+            create_time AS createTime FROM chat_message where #{id}
+
+
+
+    </select>
+    
+    <select id="selectLatestByReceiver" resultType="com.example.wisper_one.websocket.chat.POJO.ChatMessageEntity">
+        SELECT   id,
+                 sender,
+                 receiver,
+                 content,
+                 revoked,
+                 revoked_at AS revokedAt,
+                 create_time AS createTime FROM chat_message WHERE receiver = #{receiver} order by create_time desc
+    </select>
+    
+    
+<!--&lt;!&ndash;    &lt;!&ndash; 撤回消息 &ndash;&gt;&ndash;&gt;-->
+<!--    <update id="revoke">-->
+<!--        UPDATE chat_message-->
+<!--        SET revoked = 1,-->
+<!--            revoked_at = #{revokedAt}-->
+<!--        WHERE id = #{id}-->
+<!--    </update>-->
+    <update id="revoke">
+        UPDATE chat_message
+        SET revoked = 1,
+            revoked_at = #{revokedAt}
+        WHERE id = #{id}
+    </update>
+</mapper>

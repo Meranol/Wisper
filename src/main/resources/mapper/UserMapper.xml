@@ -5,7 +5,7 @@
 
 <mapper namespace="com.example.wisper_one.Login.mapper.UserMapper">
 
-    <resultMap id="UserResultMap" type="com.example.wisper_one.Login.domain.User">
+    <resultMap id="UserResultMap" type="com.example.wisper_one.Login.POJO.UserPo">
         <id property="id" column="id"/>
         <result property="publicId" column="public_id"/>
         <result property="username" column="username"/>
@@ -28,12 +28,12 @@
         SELECT * FROM users WHERE email = #{email}
     </select>
 
-    <insert id="insertUser" parameterType="com.example.wisper_one.Login.domain.User" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertUser" parameterType="com.example.wisper_one.Login.POJO.UserPo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users(username, email, public_id, password_hash, salt, nickname, status, created_at, updated_at)
         VALUES(#{username}, #{email}, #{publicId}, #{passwordHash}, #{salt}, #{nickname}, #{status}, #{createdAt}, #{updatedAt})
     </insert>
 
-    <update id="updateUser" parameterType="com.example.wisper_one.Login.domain.User">
+    <update id="updateUser" parameterType="com.example.wisper_one.Login.POJO.UserPo">
         UPDATE users
         SET last_login_at = #{lastLoginAt}, updated_at = #{updatedAt}
         WHERE id = #{id}

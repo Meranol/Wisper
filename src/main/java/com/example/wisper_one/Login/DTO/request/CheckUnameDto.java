@@ -9,17 +9,17 @@ import javax.validation.constraints.Size;
  * Date: 2026/1/10
  * Description:
  */
-public class CheckUname {
+public class CheckUnameDto {
     @NotBlank(message = "查询的用户名不能为空")
     @Size(min  =3,max=20,message="用户名长度3-20位")
     @Pattern(regexp = "^[a-zA-Z0-9_\\u4e00-\\u9fa5]+$", message = "用户名只能包含字母、数字、下划线和中文字符")
     private String uname;
 
 
-    public CheckUname() {}
+    public CheckUnameDto() {}
 
 
-    public CheckUname(String uname) {
+    public CheckUnameDto(String uname) {
         this.uname = uname;
     }
 

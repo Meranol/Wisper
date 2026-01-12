@@ -1,9 +1,9 @@
 package com.example.wisper_one.Login.service;
 
-import com.example.wisper_one.Login.DTO.request.CheckUname;
-import com.example.wisper_one.Login.DTO.request.LoginRequest;
-import com.example.wisper_one.Login.DTO.request.RegRequest;
-import com.example.wisper_one.Login.domain.User;
+import com.example.wisper_one.Login.DTO.request.CheckUnameDto;
+import com.example.wisper_one.Login.DTO.request.LoginRequestDto;
+import com.example.wisper_one.Login.DTO.request.RegRequestDto;
+import com.example.wisper_one.Login.POJO.UserPo;
 /**
  * File: UserService
  * Author: [周玉诚]
@@ -11,9 +11,9 @@ import com.example.wisper_one.Login.domain.User;
  * Description:
  */
 public interface UserService {
-    User register(RegRequest regRequest);
+    UserPo register(RegRequestDto regRequest);
 
-    Boolean checkUsername(CheckUname checkUname);
+    Boolean checkUsername(CheckUnameDto checkUname);
 
-    User login(LoginRequest loginRequest);
+    UserPo login(LoginRequestDto loginRequest);
 }

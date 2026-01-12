@@ -1,6 +1,6 @@
 package com.example.wisper_one.Login.mapper;
 
-import com.example.wisper_one.Login.domain.User;
+import com.example.wisper_one.Login.POJO.UserPo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 /**
@@ -13,16 +13,16 @@ import org.apache.ibatis.annotations.Param;
 public interface UserMapper {
 
     // 插入用户
-    int insertUser(User user);
+    int insertUser(UserPo user);
 
     // 根据用户名查询用户
-    User selectUserByUsername(@Param("username") String username);
+    UserPo selectUserByUsername(@Param("username") String username);
 
     // 根据邮箱查询用户
-    User selectUserByEmail(@Param("email") String email);
+    UserPo selectUserByEmail(@Param("email") String email);
 
     // 更新用户（登录时间、状态等）
-    int updateUser(User user);
+    int updateUser(UserPo user);
 
     // 检查用户名是否存在
     int existsByUsername(@Param("username") String username);

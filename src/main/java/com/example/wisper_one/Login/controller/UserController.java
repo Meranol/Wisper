@@ -1,10 +1,10 @@
 package com.example.wisper_one.Login.controller;
 
-import com.example.wisper_one.Login.DTO.request.CheckUname;
-import com.example.wisper_one.Login.DTO.request.LoginRequest;
-import com.example.wisper_one.Login.DTO.request.RegRequest;
+import com.example.wisper_one.Login.DTO.request.CheckUnameDto;
+import com.example.wisper_one.Login.DTO.request.LoginRequestDto;
+import com.example.wisper_one.Login.DTO.request.RegRequestDto;
 import com.example.wisper_one.Login.common.Result;
-import com.example.wisper_one.Login.domain.User;
+import com.example.wisper_one.Login.POJO.UserPo;
 import com.example.wisper_one.Login.service.UserService;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import com.example.wisper_one.utils.jwt.JwtTokenUtil;
@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,16 +30,16 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public Result<User> register(@RequestBody RegRequest regRequest) {
-        User user = userService.register(regRequest);
+    public Result<UserPo> register(@RequestBody RegRequestDto regRequest) {
+        UserPo user = userService.register(regRequest);
         return Result.success("注册成功",user);
     }
 
 
     @PostMapping("/login")
-    public Result<Map<String, Object>> login(@RequestBody LoginRequest loginRequest) {
+    public Result<Map<String, Object>> login(@RequestBody LoginRequestDto loginRequest) {
 
-        User user = userService.login(loginRequest);
+        UserPo user = userService.login(loginRequest);
         String token = JwtTokenUtil.generateToken(user.getUsername(), 2 * 60 * 60 * 1000L);
 
         Map<String, Object> data = new HashMap<>();
@@ -55,7 +54,7 @@ public class UserController {
     }
 
     @GetMapping("/checkusername")
-    public Result<Boolean> checkUsername(@Valid CheckUname checkUname) {
+    public Result<Boolean> checkUsername(@Valid CheckUnameDto checkUname) {
         boolean isAvailable = userService.checkUsername(checkUname);
 
         String message = isAvailable ? "用户名可用" : "用户名已存在";

@@ -1,4 +1,4 @@
-package com.example.wisper_one.Login.domain;
+package com.example.wisper_one.Login.POJO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * Description:
  */
 @Data
-public class User {
+public class UserPo {
 
     private Integer id;
     private String publicId;

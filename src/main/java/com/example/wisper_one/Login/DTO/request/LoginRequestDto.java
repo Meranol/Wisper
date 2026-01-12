@@ -7,17 +7,17 @@ import javax.validation.constraints.NotBlank;
  * Date: 2026/1/10
  * Description:
  */
-public class LoginRequest {
+public class LoginRequestDto {
 
     @NotBlank(message = "用户名不能为空")
     private String username;
     @NotBlank(message = "请输入密码")
     private String password;
 
-    public LoginRequest() {}
+    public LoginRequestDto() {}
 
 
-    public LoginRequest(String username, String password) {
+    public LoginRequestDto(String username, String password) {
         this.username = username;
         this.password = password;
     }

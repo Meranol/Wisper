@@ -38,8 +38,13 @@ public class SimpleJwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain chain)
             throws ServletException, IOException {
-
         String path = request.getRequestURI();
+
+        //放行WebSocket 握手
+        if (path.startsWith("/ws/")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         //放行浏览器OPTIONS请求
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {

@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
  * Date: 2026/1/10
  * Description:
  */
-public class RegRequest {
+public class RegRequestDto {
     @NotBlank(message = "用户名不能为空")
     @Size(min  =3,max=20,message="用户名长度3-20位")
     @Pattern(regexp = "^[a-zA-Z0-9_\\u4e00-\\u9fa5]+$", message = "用户名只能包含字母、数字、下划线和中文字符")
@@ -27,9 +27,9 @@ public class RegRequest {
     private String password;
 
 
-   public RegRequest() {}
+   public RegRequestDto() {}
 
-    public RegRequest(String email, String username, String password) {
+    public RegRequestDto(String email, String username, String password) {
         this.email = email;
         this.username = username;
         this.password = password;
