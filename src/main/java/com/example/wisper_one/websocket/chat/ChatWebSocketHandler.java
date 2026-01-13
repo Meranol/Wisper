@@ -18,6 +18,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -92,6 +93,26 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             old.close();
         }
 
+        List<ChatMessageEntity> message = chatMessageMapper.checkMessageRead(userId);
+
+        ObjectMapper mapper = new ObjectMapper();
+        for (ChatMessageEntity msg : message) {
+            ObjectNode node = mapper.createObjectNode();
+            node.put("from", msg.getSender());
+            node.put("msg", msg.getContent());
+            node.put("type", msg.getType());
+
+            session.sendMessage(new TextMessage(node.toString()));
+
+            // 标记为已读
+            chatMessageMapper.updateMessageReadState(msg.getId());
+        }
+
+
+
+
+
+
         System.out.println("上线了" + userId);
 
 
@@ -125,10 +146,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         WebSocketSession targetSession = ONLINE_USERS.get(toUserId);
 
 
-        if (targetSession == null || !targetSession.isOpen()) {
-            session.sendMessage(new TextMessage("对方不在线"));
-            return;
-        }
+
 
         ChatMessageEntity chatMessageEntity = new ChatMessageEntity();
         chatMessageEntity.setSender(fromUserId);
@@ -145,13 +163,17 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         resp.put("msg", content);
         resp.put("type", type);
 
+
         int rows = chatMessageMapper.insert(chatMessageEntity);
         if (rows != 1) {
             throw new BusinessException("实时聊天插入失败");
         }
         //发给对方
-        targetSession.sendMessage(new TextMessage(resp.toString()));
-
+        if (targetSession != null && !targetSession.isOpen()) {
+            targetSession.sendMessage(new TextMessage(resp.toString()));
+        }else {
+            System.out.println("对方不在线，消息已保存数据库");
+        }
     }
 
     @Override

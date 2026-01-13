@@ -76,7 +76,19 @@
         ORDER BY create_time DESC
     </select>
 
-<!--&lt;!&ndash;    &lt;!&ndash; 撤回消息 &ndash;&gt;&ndash;&gt;-->
+
+    <select id="checkMessageRead" resultType="com.example.wisper_one.websocket.chat.POJO.ChatMessageEntity">
+        SELECT * FROM chat_message
+        WHERE receiver = #{receiver} AND revoked = 0 AND read_state = 0
+        ORDER BY create_time ASC
+    </select>
+    
+    
+    <update id="updateMessageReadState">
+        UPDATE chat_message set read_state = 1 where id = #{id}
+    </update>
+
+    <!--&lt;!&ndash;    &lt;!&ndash; 撤回消息 &ndash;&gt;&ndash;&gt;-->
 <!--    <update id="revoke">-->
 <!--        UPDATE chat_message-->
 <!--        SET revoked = 1,-->

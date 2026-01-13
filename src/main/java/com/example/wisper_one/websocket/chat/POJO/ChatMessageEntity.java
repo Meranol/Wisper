@@ -26,7 +26,9 @@ public class ChatMessageEntity {
 
     /** 是否撤回：0-正常，1-已撤回 */
     private Integer revoked;
-
+    /** 是否以读：0-未读，1-已读 */
+    private Integer readState;
+    /** 自定义消息类型 */
     private String type;    // text / image
 
     /** 撤回时间 */

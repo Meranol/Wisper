@@ -5,6 +5,7 @@ import io.lettuce.core.dynamic.annotation.Param;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * File: ChatMessageMapper
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 public interface ChatMessageMapper {
     int insert(ChatMessageEntity entity);
     ChatMessageEntity selectLatestByReceiver(@Param("receiver") String receiver);
-
+    List<ChatMessageEntity> checkMessageRead(@Param("receiver") String receiver);
+    int updateMessageReadState(Long messageId);
     int revoke (@Param("id") Long id,@Param("revokedAt") LocalDateTime revokedAt);
 }

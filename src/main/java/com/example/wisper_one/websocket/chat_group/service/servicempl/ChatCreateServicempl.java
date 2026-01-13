@@ -32,6 +32,7 @@ public class ChatCreateServicempl implements ChatCreateService {
 
     @Override
     public ChatGroupEntity createChatGroup(ChatGroupEntity chatGroup) {
+
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         UserPo userPo = userMapper.selectUserByUsername(name);
         System.out.println(userPo);

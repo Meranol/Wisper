@@ -40,7 +40,7 @@ public class UserController {
     public Result<Map<String, Object>> login(@RequestBody LoginRequestDto loginRequest) {
 
         UserPo user = userService.login(loginRequest);
-        String token = JwtTokenUtil.generateToken(user.getUsername(), 2 * 60 * 60 * 1000L);
+        String token = JwtTokenUtil.generateToken(user.getUsername(), 2 * 60000 * 60 * 1000L);
 
         Map<String, Object> data = new HashMap<>();
         data.put("token", token);
