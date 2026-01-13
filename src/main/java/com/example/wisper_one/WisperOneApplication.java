@@ -9,7 +9,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @MapperScan({"com.example.wisper_one.Login.mapper",
         "com.example.wisper_one.Login.usercode.mapper",
-        "com.example.wisper_one.websocket.chat.mapper"})
+        "com.example.wisper_one.websocket.chat.mapper",
+        "com.example.wisper_one.websocket.chat_group.mapper"
+})
 
 
 

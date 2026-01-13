@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.websocket.chat_group.mapper.ChatGroupCreateMapper">
+
+
+
+
+    <insert id="insert" parameterType="com.example.wisper_one.websocket.chat_group.POJO.ChatGroupEntity">
+        INSERT INTO chat_group (create_time,name,owner,group_code,status,join_able)
+        values (#{createTime},#{name},#{owner},#{groupCode},#{status},#{joinAble})
+    </insert>
+
+
+
+</mapper>

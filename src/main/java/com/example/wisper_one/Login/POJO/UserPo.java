@@ -16,6 +16,7 @@ public class UserPo {
     private Integer id;
     private String publicId;
     private String username;
+    private Integer vip = 0;
 
     @JsonIgnore
     private String passwordHash;

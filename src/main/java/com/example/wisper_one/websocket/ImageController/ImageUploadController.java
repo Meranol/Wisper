@@ -1,4 +1,4 @@
-package com.example.wisper_one.websocket.chat.ImageController;
+package com.example.wisper_one.websocket.ImageController;
 
 import com.example.wisper_one.utils.Exception.BusinessException;
 import org.springframework.web.bind.annotation.PostMapping;

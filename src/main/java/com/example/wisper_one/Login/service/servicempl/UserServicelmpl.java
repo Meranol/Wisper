@@ -50,6 +50,7 @@ public class UserServicelmpl implements UserService {
         user.setSalt(user.getPasswordHash());
         user.setNickname(regRequest.getUsername());
         user.setStatus(1);
+        user.setVip(0);
         LocalDateTime now = LocalDateTime.now();
         user.setCreatedAt(now);
         user.setUpdatedAt(now);

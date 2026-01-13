@@ -10,7 +10,7 @@ import com.example.wisper_one.Login.POJO.UserPo;
  * Date: 2026/1/10
  * Description:
  */
-public interface UserService {
+public interface UserService  {
     UserPo register(RegRequestDto regRequest);
 
     Boolean checkUsername(CheckUnameDto checkUname);

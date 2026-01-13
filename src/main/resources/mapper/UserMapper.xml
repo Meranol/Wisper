@@ -29,8 +29,8 @@
     </select>
 
     <insert id="insertUser" parameterType="com.example.wisper_one.Login.POJO.UserPo" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO users(username, email, public_id, password_hash, salt, nickname, status, created_at, updated_at)
-        VALUES(#{username}, #{email}, #{publicId}, #{passwordHash}, #{salt}, #{nickname}, #{status}, #{createdAt}, #{updatedAt})
+        INSERT INTO users(username, email, public_id, password_hash, salt, nickname,vip, status, created_at, updated_at)
+        VALUES(#{username}, #{email}, #{publicId}, #{passwordHash}, #{salt}, #{nickname},#{vip}, #{status}, #{createdAt}, #{updatedAt})
     </insert>
 
     <update id="updateUser" parameterType="com.example.wisper_one.Login.POJO.UserPo">
