@@ -1,15 +1,11 @@
-package com.example.wisper_one.websocket.chat;
+package com.example.wisper_one.websocket.chat.handler;
 
-import com.example.wisper_one.Login.common.Result;
 import com.example.wisper_one.utils.Exception.BusinessException;
-import com.example.wisper_one.utils.ResultCode;
-import com.example.wisper_one.utils.jwt.JwtTokenUtil;
 import com.example.wisper_one.websocket.chat.POJO.ChatMessageEntity;
 import com.example.wisper_one.websocket.chat.mapper.ChatMessageMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;

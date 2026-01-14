@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.websocket.chat_group.mapper.ChatGroupMapper">
+
+    <!--根据群号查询群 -->
+    <select id="selectByGroupCode"
+            resultType="com.example.wisper_one.websocket.chat_group.POJO.ChatGroupEntity">
+        SELECT *
+        FROM chat_group
+        WHERE group_code = #{groupCode}
+    </select>
+
+    <!--查询群内指定成员 -->
+    <select id="selectMember"
+            resultType="com.example.wisper_one.websocket.chat_group.POJO.ChatGroupMemberEntity">
+        SELECT *
+        FROM chat_group_member
+        WHERE group_id = #{groupId}
+          AND user_id = #{userId}
+    </select>
+
+    <!--查询群所有成员 -->
+    <select id="selectMembers"
+            resultType="com.example.wisper_one.websocket.chat_group.POJO.ChatGroupMemberEntity">
+        SELECT *
+        FROM chat_group_member
+        WHERE group_id = #{groupId}
+    </select>
+
+</mapper>
