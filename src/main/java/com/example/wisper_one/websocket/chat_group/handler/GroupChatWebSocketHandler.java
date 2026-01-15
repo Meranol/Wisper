@@ -163,12 +163,12 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
                 String uid = entry.getKey();
                 WebSocketSession s = entry.getValue();
 
-//                // 再次确认这个用户真的在群里
-//                ChatGroupMemberEntity chatGroupMember = chatGroupMapper.selectMember(groupcode, uid);
-//
-//
-//
-//                if (chatGroupMember == null) continue;
+                // 再次确认这个用户真的在群里
+                ChatGroupMemberEntity chatGroupMember = chatGroupMapper.selectMember(groupcode, uid);
+
+
+
+                if (chatGroupMember == null) continue;
 
                 ObjectNode resp = mapper.createObjectNode();
                 resp.put("from", userId);
