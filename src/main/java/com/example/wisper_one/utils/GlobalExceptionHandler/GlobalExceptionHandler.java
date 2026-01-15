@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.joining("; "));
         return Result.failure(ResultCode.PARAM_ERROR, msg);
     }
-    // 2️⃣ GET + @Valid DTO
+    //GET+@Valid DTO
     @ExceptionHandler(BindException.class)
     public Result<?> handleBind(BindException e) {
         String msg = e.getBindingResult()

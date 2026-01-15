@@ -55,5 +55,7 @@ spring:
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.example.wisper_one.Login.domain
+  configuration:
+    map-underscore-to-camel-case: true
 
 

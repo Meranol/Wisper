@@ -7,8 +7,8 @@
 
     <!-- 插入群消息 -->
     <insert id="insert" parameterType="com.example.wisper_one.websocket.chat_group.POJO.ChatGroupMessageEntity" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO chat_group_message(group_id, sender_id, content, type, create_time)
-        VALUES(#{groupId}, #{senderId}, #{content}, #{type}, #{createTime})
+        INSERT INTO chat_group_message(group_code, sender_id, content, type, create_time)
+        VALUES(#{groupCode}, #{senderId}, #{content}, #{type}, #{createTime})
     </insert>
 
     <!-- 查询某用户在群里的未读消息 -->
@@ -16,8 +16,8 @@
         SELECT m.*
         FROM chat_group_message m
                  LEFT JOIN chat_group_message_read r
-                           ON m.id = r.message_id AND r.user_id = #{userId}
-        WHERE m.group_id = #{groupId} AND (r.read_state IS NULL OR r.read_state = 0)
+                           ON m.id = r.message_id AND r.user_code = #{userId}
+        WHERE m.group_code = #{groupCode} AND (r.read_state IS NULL OR r.read_state = 0)
         ORDER BY m.create_time ASC
     </select>
 
@@ -25,12 +25,12 @@
     <update id="updateMessageReadState">
         UPDATE chat_group_message_read
         SET read_state = 1
-        WHERE message_id = #{messageId} AND user_id = #{userId}
+        WHERE message_id = #{messageId} AND user_code = #{userId}
     </update>
 
     <!-- 为用户生成未读消息记录 -->
     <insert id="insertMessageReadRecord">
-        INSERT INTO chat_group_message_read(message_id, user_id, read_state)
+        INSERT INTO chat_group_message_read(message_id, user_code, read_state)
         VALUES(#{messageId}, #{userId}, 0)
     </insert>
 

@@ -19,7 +19,10 @@ public interface UserMapper {
     UserPo selectUserByUsername(@Param("username") String username);
 
     // 根据邮箱查询用户
-    UserPo selectUserByEmail(@Param("email") String email);
+    String selectUserByEmail(@Param("email") String email);
+
+    //更具用户名查询user_code
+    String selectCodeByUname(@Param("Uname") String uname);
 
     // 更新用户（登录时间、状态等）
     int updateUser(UserPo user);

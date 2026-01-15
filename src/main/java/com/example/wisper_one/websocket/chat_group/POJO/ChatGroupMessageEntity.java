@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 public class ChatGroupMessageEntity {
     private Long id;
-    private Long groupId;
+    private String groupCode;
     private String senderId;
     private String content;
     private String type;

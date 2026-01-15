@@ -18,16 +18,18 @@
             resultType="com.example.wisper_one.websocket.chat_group.POJO.ChatGroupMemberEntity">
         SELECT *
         FROM chat_group_member
-        WHERE group_id = #{groupId}
-          AND user_id = #{userId}
+        WHERE group_code = #{groupCode}
+          AND user_code = #{user_code}
     </select>
+
+
 
     <!--查询群所有成员 -->
     <select id="selectMembers"
             resultType="com.example.wisper_one.websocket.chat_group.POJO.ChatGroupMemberEntity">
         SELECT *
         FROM chat_group_member
-        WHERE group_id = #{groupId}
+        WHERE group_code = #{groupCode}  AND user_code IS NOT NULL
     </select>
 
 </mapper>

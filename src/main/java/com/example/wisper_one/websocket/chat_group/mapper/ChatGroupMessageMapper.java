@@ -23,7 +23,7 @@ public interface ChatGroupMessageMapper {
     /**
      * 查询某个用户在群里的未读消息
      */
-    List<ChatGroupMessageEntity> selectUnreadMessages(@Param("groupId") Long groupId,
+    List<ChatGroupMessageEntity> selectUnreadMessages(@Param("groupCode") String groupId,
                                                       @Param("userId") String userId);
 
     /**

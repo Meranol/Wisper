@@ -19,12 +19,12 @@ public interface ChatGroupMapper {
     /**
      * 查询某个群内的指定成员
      */
-    ChatGroupMemberEntity selectMember(@Param("groupCode") String groupId, @Param("userId") String userId);
+    ChatGroupMemberEntity selectMember(@Param("groupCode") String groupCode, @Param("user_code") String user_code);
 
     /**
      * 查询群所有成员
      */
-    List<ChatGroupMemberEntity> selectMembers(@Param("groupCode") String groupId);
+    List<ChatGroupMemberEntity> selectMembers(@Param("groupCode") String groupCode);
 
     ChatGroupEntity selectByGroupCode(@Param("groupCode") String groupCode);
 
