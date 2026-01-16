@@ -92,9 +92,19 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
             node.put("groupId", msg.getGroupCode());
 
             session.sendMessage(new TextMessage(node.toString()));
+            System.out.println("已读数据库修改“："+msg.getId()+":"+userCode);
 
-            // 标记已读
-            chatGroupMessageMapper.updateMessageReadState(msg.getId(), userId);
+            //已读消息兜底插入
+            chatGroupMessageMapper.insertMessageReadRecord(
+                    msg.getId(), userCode
+            );
+
+            int result = chatGroupMessageMapper.updateMessageReadState(
+                    msg.getId(), userCode
+            );
+
+            System.out.println("已读影响行数：" + result);
+
         }
 
         System.out.println("用户上线群聊: " + userId + ", groupId=" + groupcode);
@@ -187,4 +197,8 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
         GROUP_ONLINE_USERS.values().forEach(map -> map.values().removeIf(s -> s.equals(session)));
         System.out.println("群聊用户下线: " + session + ", status=" + status);
     }
+
+
+
+
 }

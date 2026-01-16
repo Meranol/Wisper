@@ -30,8 +30,9 @@
 
     <!-- 为用户生成未读消息记录 -->
     <insert id="insertMessageReadRecord">
-        INSERT INTO chat_group_message_read(message_id, user_code, read_state)
-        VALUES(#{messageId}, #{userId}, 0)
+        INSERT IGNORE INTO chat_group_message_read
+    (message_id, user_code, read_state)
+    VALUES (#{messageId}, #{userId}, 0)
     </insert>
 
 </mapper>
