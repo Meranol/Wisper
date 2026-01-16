@@ -17,7 +17,7 @@
         FROM chat_group_message m
                  LEFT JOIN chat_group_message_read r
                            ON m.id = r.message_id AND r.user_code = #{userId}
-        WHERE m.group_code = #{groupCode} AND (r.read_state IS NULL OR r.read_state = 0)
+        WHERE m.group_code = #{groupCode} AND r.read_state = 0
         ORDER BY m.create_time ASC
     </select>
 

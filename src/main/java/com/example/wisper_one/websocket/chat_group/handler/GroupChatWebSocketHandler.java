@@ -82,7 +82,7 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
         GROUP_ONLINE_USERS.get(groupcode).put(userId, session);
 
         // 获取离线未读消息
-        List<ChatGroupMessageEntity> unreadMessages = chatGroupMessageMapper.selectUnreadMessages(groupcode, userId);
+        List<ChatGroupMessageEntity> unreadMessages = chatGroupMessageMapper.selectUnreadMessages(groupcode, userCode);
 
         for (ChatGroupMessageEntity msg : unreadMessages) {
             ObjectNode node = mapper.createObjectNode();
@@ -173,12 +173,12 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
                 String uid = entry.getKey();
                 WebSocketSession s = entry.getValue();
 
-                // 再次确认这个用户真的在群里
-                ChatGroupMemberEntity chatGroupMember = chatGroupMapper.selectMember(groupcode, uid);
-
-
-
-                if (chatGroupMember == null) continue;
+//                // 再次确认这个用户真的在群里
+//                ChatGroupMemberEntity chatGroupMember = chatGroupMapper.selectMember(groupcode, uid);
+//
+//
+//
+//                if (chatGroupMember == null) continue;
 
                 ObjectNode resp = mapper.createObjectNode();
                 resp.put("from", userId);
