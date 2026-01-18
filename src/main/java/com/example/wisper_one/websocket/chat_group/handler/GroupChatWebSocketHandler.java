@@ -107,6 +107,8 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
 
         }
 
+
+
         System.out.println("用户上线群聊: " + userId + ", groupId=" + groupcode);
     }
 
@@ -173,12 +175,7 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
                 String uid = entry.getKey();
                 WebSocketSession s = entry.getValue();
 
-//                // 再次确认这个用户真的在群里
-//                ChatGroupMemberEntity chatGroupMember = chatGroupMapper.selectMember(groupcode, uid);
-//
-//
-//
-//                if (chatGroupMember == null) continue;
+
 
                 ObjectNode resp = mapper.createObjectNode();
                 resp.put("from", userId);
@@ -187,6 +184,11 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
                 resp.put("groupId", groupcode);
 
                 s.sendMessage(new TextMessage(resp.toString()));
+                String ucode = userMapper.selectCodeByUname(uid);
+                chatGroupMessageMapper.insertMessageReadRecord(msgEntity.getId(), ucode);
+                chatGroupMessageMapper.updateMessageReadState(
+                        msgEntity.getId(), ucode
+                );
             }
         }
     }
