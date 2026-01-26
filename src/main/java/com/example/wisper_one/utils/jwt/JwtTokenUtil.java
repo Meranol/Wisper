@@ -17,10 +17,10 @@ public class JwtTokenUtil {
     private static final String SECRET_KEY = "12345678901234567890123456789012";
     private static final SecretKey KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
-    public static String generateToken(String username, long expireMillis) {
+    public static String generateToken(String username,String usecode, long expireMillis) {
         Date now = new Date();
         String token = Jwts.builder()
-                .setSubject(username)
+                .setSubject(username).claim("usercode",usecode)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + expireMillis))
                 .signWith(KEY, SignatureAlgorithm.HS256)
@@ -29,6 +29,7 @@ public class JwtTokenUtil {
         System.out.println("生成的Token: " + token);
         System.out.println("使用的密钥: " + SECRET_KEY);
         System.out.println("用户名: " + username);
+        System.out.println("用户名code: " +usecode );
         System.out.println("过期时间: " + new Date(now.getTime() + expireMillis));
 
         return token;

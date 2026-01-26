@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.websocket.chat.friend.mapper.FriendRelationMapper">
+
+    <insert id="insertFriendRequest"
+        parameterType="com.example.wisper_one.websocket.chat.friend.mapper.FriendRequestMapper"
+        useGeneratedKeys="true"
+            keyProperty="id"
+    >
+        INSERT INTO friend_relation ( user_code,friend_code,status,create_time) values
+            (#{userCode},#{friendCode},#{status},#{createTime})
+    </insert>
+
+</mapper>

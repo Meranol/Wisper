@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.websocket.chat_group.applyjoin.mapper.MemberRequestHandlerMapper">
+
+    <update id="updateById"
+            parameterType="com.example.wisper_one.websocket.chat_group.applyjoin.POJO.MemberRequestHandlerDTO">
+        UPDATE member_request
+        SET status = #{status},
+            handlername = #{handlername},
+            handle_time = #{handleTime}
+        WHERE id = #{id}
+          AND status = 0
+    </update>
+
+    <select id="selectStatusById" resultType="java.lang.Integer">
+        SELECT status
+        FROM member_request
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectGroupCodeById" resultType="java.lang.String">
+        SELECT to_group
+        FROM member_request
+        WHERE id = #{id}
+    </select>
+    <select id="selectucodeById" resultType="java.lang.String">
+        SELECT from_user_code
+        FROM member_request
+        WHERE id = #{id}
+    </select>
+
+</mapper>

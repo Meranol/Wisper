@@ -8,11 +8,18 @@
 
 
 
-    <insert id="insert" parameterType="com.example.wisper_one.websocket.chat_group.POJO.ChatGroupEntity">
+    <insert id="insert" parameterType="com.example.wisper_one.websocket.chat_group.applyjoin.POJO.MemberRequestEntity">
         INSERT INTO chat_group (create_time,name,owner,group_code,status,join_able)
         values (#{createTime},#{name},#{owner},#{groupCode},#{status},#{joinAble})
     </insert>
 
+    <select id="selectgroupbygroupcode"
+            resultType="com.example.wisper_one.websocket.chat_group.POJO.ChatGroupEntity">
 
+
+        select * from chat_group where group_code = #{group_code}
+
+
+    </select>
 
 </mapper>

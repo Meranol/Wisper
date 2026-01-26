@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.websocket.chat_group.applyjoin.mapper.MemberRequestMapper">
+
+    <insert id="createMemberRequest"
+            parameterType="com.example.wisper_one.websocket.chat_group.applyjoin.POJO.MemberRequestEntity"
+            useGeneratedKeys="true"
+            keyProperty="id"
+    >
+        INSERT INTO member_request ( from_user_code,to_group,status,create_time,remark) values
+            (#{fromUserCode},#{toGroup},#{status},#{createTime},#{remark})
+
+
+    </insert>
+
+
+
+    <select id="selectifin"
+            resultType="com.example.wisper_one.websocket.chat_group.POJO.ChatGroupMemberEntity">
+        select * from chat_group_member where group_code = #{group_code} and user_code = #{user_code} and status =1
+    </select>
+
+    <select id="selectMemberRequest"
+            resultType="com.example.wisper_one.websocket.chat_group.applyjoin.POJO.MemberRequestEntity">
+        select * from member_request where from_user_code = #{from_user_code} and to_group = #{to_group} and  status = 0
+    </select>
+
+</mapper>

@@ -32,6 +32,14 @@
         SELECT public_id FROM users WHERE username = #{Uname}
     </select>
 
+
+
+    <select id="selectUnameByCode" resultType="String" parameterType="String">
+        SELECT username FROM users WHERE public_id = #{Code}
+    </select>
+
+
+
     <insert id="insertUser" parameterType="com.example.wisper_one.Login.POJO.UserPo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users(username, email, public_id, password_hash, salt, nickname,vip, status, created_at, updated_at)
         VALUES(#{username}, #{email}, #{publicId}, #{passwordHash}, #{salt}, #{nickname},#{vip}, #{status}, #{createdAt}, #{updatedAt})
