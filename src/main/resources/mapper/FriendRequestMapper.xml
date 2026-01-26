@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.websocket.chat.friend.mapper.FriendRequestMapper">
+
+    <insert id="insertFriendRequest"
+            parameterType="com.example.wisper_one.websocket.chat.friend.POJO.FriendRequestEntity"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO friend_request (from_user_code, to_user_code, status, create_time, handle_time,remark)
+        VALUES (#{fromUserCode}, #{toUserCode}, #{status}, #{createTime}, #{handleTime},#{remark})
+    </insert>
+
+
+    <!-- 查询是否有未处理的好友申请 -->
+    <select id="selectExistingRequest" parameterType="map" resultType="com.example.wisper_one.websocket.chat.friend.POJO.FriendRequestEntity">
+        SELECT * FROM friend_request
+        WHERE from_user_code = #{fromUserCode}
+          AND to_user_code = #{toUserCode}
+          AND status = 0
+            LIMIT 1
+    </select>
+
+    <!-- 查询是否有好友申请 -->
+    <select id="selectRequest" parameterType="map" resultType="com.example.wisper_one.websocket.chat.friend.POJO.FriendRequestEntity">
+        SELECT * FROM friend_request
+        WHERE from_user_code = #{fromUserCode}
+          AND to_user_code = #{toUserCode}
+
+    </select>
+
+
+
+
+    <update id="updateStatus" parameterType="com.example.wisper_one.websocket.chat.friend.POJO.FriendRequestEntity">
+        UPDATE  friend_request set status = #{status},
+                                   handle_time = #{handleTime}
+                                   WHERE id = #{id}
+    </update>
+
+</mapper>

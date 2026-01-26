@@ -32,4 +32,14 @@
         WHERE group_code = #{groupCode}  AND user_code IS NOT NULL
     </select>
 
+    <select id="selectRoleByUcode" resultType="java.lang.Integer">
+        SELECT role
+        FROM chat_group_member
+        WHERE user_code = #{userCode}
+          AND group_code = #{groupCode}
+    </select>
+
+
+
+
 </mapper>

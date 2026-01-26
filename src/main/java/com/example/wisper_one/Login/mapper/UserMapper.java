@@ -24,6 +24,9 @@ public interface UserMapper {
     //更具用户名查询user_code
     String selectCodeByUname(@Param("Uname") String uname);
 
+    //更具用户名查询user_code
+    String selectUnameByCode(@Param("Code") String code);
+
     // 更新用户（登录时间、状态等）
     int updateUser(UserPo user);
 

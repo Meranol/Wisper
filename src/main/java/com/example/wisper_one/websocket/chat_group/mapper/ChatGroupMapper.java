@@ -28,4 +28,8 @@ public interface ChatGroupMapper {
 
     ChatGroupEntity selectByGroupCode(@Param("groupCode") String groupCode);
 
+    Integer selectRoleByUcode(@Param("userCode") String userCode,
+                              @Param("groupCode") String groupCode);
+
+
 }
