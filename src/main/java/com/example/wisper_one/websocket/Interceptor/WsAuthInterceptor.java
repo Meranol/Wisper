@@ -3,7 +3,11 @@ package com.example.wisper_one.websocket.Interceptor;
 import com.example.wisper_one.Login.common.Result;
 import com.example.wisper_one.utils.ResultCode;
 import com.example.wisper_one.utils.jwt.JwtTokenUtil;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -11,7 +15,9 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -24,6 +30,11 @@ import java.util.Map;
 @Configuration
 @EnableWebSocket
 public class WsAuthInterceptor implements HandshakeInterceptor {
+
+
+    @Resource
+    private RedisTemplate<String, String> redisTemplate; // 注入 Redis
+
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         String token = null;
@@ -46,6 +57,27 @@ public class WsAuthInterceptor implements HandshakeInterceptor {
 
         Result<String> result = JwtTokenUtil.verifyToken(token);
         if (result.getCode() != ResultCode.SUCCESS) return false;
+
+
+
+
+
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor("12345678901234567890123456789012".getBytes(StandardCharsets.UTF_8)))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+
+        String usercode = claims.get("usercode", String.class);
+        String redisKey = "login:token:" + usercode;
+
+
+
+        // 4. Redis 校验，是否已经被踢
+        if (!Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
+            return false; // token 被踢出或过期
+        }
 
         attributes.put("userId", result.getData());
         return true;

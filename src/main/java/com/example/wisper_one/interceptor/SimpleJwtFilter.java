@@ -3,6 +3,10 @@ package com.example.wisper_one.interceptor;
 import com.example.wisper_one.Login.common.Result;
 import com.example.wisper_one.utils.ResultCode;
 import com.example.wisper_one.utils.jwt.JwtTokenUtil;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,11 +14,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +38,9 @@ public class SimpleJwtFilter extends OncePerRequestFilter {
             "/user/register",
             "/user/checkusername"
     );
+    @Resource
+    private RedisTemplate<String, String> redisTemplate; // 注入 Redis
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -76,6 +85,23 @@ public class SimpleJwtFilter extends OncePerRequestFilter {
         Result<String> verifyResult = JwtTokenUtil.verifyToken(token);
         if (verifyResult.getCode() != ResultCode.SUCCESS) {
             writeUnauthorized(response, "token无效或已过期");
+            return;
+        }
+
+
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor("12345678901234567890123456789012".getBytes(StandardCharsets.UTF_8)))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+
+        String usercode = claims.get("usercode", String.class);
+        String redisKey = "login:token:" + usercode;
+        String redisToken = redisTemplate.opsForValue().get(redisKey);
+
+        if (redisToken == null || !redisToken.equals(token)) {
+            writeUnauthorized(response, "账号已被踢出");
             return;
         }
 

@@ -28,8 +28,10 @@ public class ChatGroupJoinServicempl implements ChatGroupJoinService {
     private UserMapper userMapper;
     @Resource
     private ChatGroupMemberMapper chatGroupMemberMapper;
+    @Resource
+    ChatGroupMapper chatGroupMappers;
     @Override
-    public ChatGroupMemberEntity join(ChatGroupMemberEntity chatGroupMapper) {
+    public ChatGroupMemberEntity join(ChatGroupMemberEntity chatGroupMember) {
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         UserPo userPo = userMapper.selectUserByUsername(name);
@@ -43,9 +45,12 @@ public class ChatGroupJoinServicempl implements ChatGroupJoinService {
         chatGroupMemberEntity.setJoinTime(LocalDateTime.now());
         chatGroupMemberEntity.setUserCode(userPo.getPublicId());
         chatGroupMemberEntity.setRole(0);
-        chatGroupMemberEntity.setGroupCode(chatGroupMapper.getGroupCode());
+        chatGroupMemberEntity.setGroupCode(chatGroupMember.getGroupCode());
         chatGroupMemberEntity.setMemberNick(name);
-
+        Object selectgroupuser = chatGroupMappers.selectMember(chatGroupMember.getGroupCode(),userPo.getPublicId());
+        if (selectgroupuser != null) {
+            throw new BusinessException("你已在群中");
+        }
         int row = chatGroupMemberMapper.insert(chatGroupMemberEntity);
 
         if (row != 1) {

@@ -38,6 +38,10 @@
         SELECT username FROM users WHERE public_id = #{Code}
     </select>
 
+    <select id="selectVipByCode" resultType="String" parameterType="String">
+        SELECT vip FROM users WHERE public_id = #{Code}
+    </select>
+
 
 
     <insert id="insertUser" parameterType="com.example.wisper_one.Login.POJO.UserPo" useGeneratedKeys="true" keyProperty="id">

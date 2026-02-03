@@ -6,6 +6,7 @@ import com.example.wisper_one.websocket.chat_group.POJO.ChatGroupMemberEntity;
 import com.example.wisper_one.websocket.chat_group.POJO.ChatGroupMessageEntity;
 import com.example.wisper_one.websocket.chat_group.mapper.ChatGroupMapper;
 import com.example.wisper_one.websocket.chat_group.mapper.ChatGroupMessageMapper;
+import com.example.wisper_one.websocket.chat_group.util.GlobalWsSessionManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Component;
@@ -79,7 +80,7 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
         session.getAttributes().put("groupId", groupcode);
         // 保存在线状态
         GROUP_ONLINE_USERS.putIfAbsent(groupcode, new ConcurrentHashMap<>());
-        GROUP_ONLINE_USERS.get(groupcode).put(userId, session);
+        GROUP_ONLINE_USERS.get(groupcode).put(userCode, session);
 
         // 获取离线未读消息
         List<ChatGroupMessageEntity> unreadMessages = chatGroupMessageMapper.selectUnreadMessages(groupcode, userCode);
@@ -108,8 +109,10 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
         }
 
 
+        GlobalWsSessionManager.add(userCode, session);
 
         System.out.println("用户上线群聊: " + userId + ", groupId=" + groupcode);
+        System.out.println(GROUP_ONLINE_USERS);
     }
 
     @Override
@@ -196,6 +199,12 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         // 遍历群移除下线用户
+        String userId = (String) session.getAttributes().get("userId");
+        if (userId != null) {
+            String userCode = userMapper.selectCodeByUname(userId);
+            GlobalWsSessionManager.remove(userCode, session);
+        }
+
         GROUP_ONLINE_USERS.values().forEach(map -> map.values().removeIf(s -> s.equals(session)));
         System.out.println("群聊用户下线: " + session + ", status=" + status);
     }

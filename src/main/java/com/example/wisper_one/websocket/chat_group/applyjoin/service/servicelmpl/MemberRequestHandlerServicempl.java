@@ -70,6 +70,12 @@ public class MemberRequestHandlerServicempl implements MemberRequestHandlerServi
         Integer checkstatus = memberRequestHandlerMapper.selectStatusById(dto.getId());
         String ucode = memberRequestHandlerMapper.selectucodeById(dto.getId());
         String name = userMapper.selectUnameByCode(ucode);
+
+        Object selectgroupuser = chatGroupMapper.selectMember(group,ucode);
+        if (selectgroupuser != null) {
+            throw new BusinessException("你已在群中无需再次申请");
+        }
+
         if (checkstatus ==1) {
             ChatGroupMemberEntity chatGroupMemberEntity = new ChatGroupMemberEntity();
             chatGroupMemberEntity.setJoinTime(LocalDateTime.now());
@@ -82,6 +88,8 @@ public class MemberRequestHandlerServicempl implements MemberRequestHandlerServi
             if (row != 1) {
                 throw new BusinessException("群成员插入失败");
             }
+
+
         }
 
         return dto;

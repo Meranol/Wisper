@@ -1,8 +1,10 @@
 package com.example.wisper_one.websocket.chat.handler;
 
+import com.example.wisper_one.Login.mapper.UserMapper;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import com.example.wisper_one.websocket.chat.POJO.ChatMessageEntity;
 import com.example.wisper_one.websocket.chat.mapper.ChatMessageMapper;
+import com.example.wisper_one.websocket.chat_group.util.GlobalWsSessionManager;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -37,7 +39,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         /*
         * B = 黑色节点
 
-        R = 红色节点
+        R =
+        * 红色节点
 
         查找 7：
 
@@ -67,6 +70,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Resource
     private ChatMessageMapper chatMessageMapper;
+    @Resource
+    private UserMapper userMapper;
 
     private static final Map<String, WebSocketSession> ONLINE_USERS = new ConcurrentHashMap<>(); //ConcurrentHashMap 是线程安全的 HashMap 版本
 
@@ -75,14 +80,15 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         System.out.println(session);
         String userId = (String) session.getAttributes().get("userId");
+        String userCode = userMapper.selectCodeByUname(userId);
 
-        if (userId == null) {
-            session.close(CloseStatus.NOT_ACCEPTABLE.withReason("no userId"));
-            System.out.println("用户上线失败userid为空");
+        if (userCode == null) {
+            session.close(CloseStatus.NOT_ACCEPTABLE.withReason("no userCode"));
+            System.out.println("用户上线失败userCode为空");
             return;
         }
 
-        WebSocketSession old = ONLINE_USERS.put(userId, session);
+        WebSocketSession old = ONLINE_USERS.put(userCode, session);
 
         if (old != null && old.isOpen()) {
             old.sendMessage(new TextMessage("账号已经在别处登录"));
@@ -106,10 +112,9 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
 
 
+        GlobalWsSessionManager.add(userId, session);
 
-
-
-        System.out.println("上线了" + userId);
+        System.out.println("上线了" + userCode);
 
 
     }
@@ -119,6 +124,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         //当前用户
         String fromUserId = (String) session.getAttributes().get("userId");
+        String userCode = userMapper.selectCodeByUname(fromUserId);
         // 解析消息
         ObjectMapper mapper = new ObjectMapper();
 
@@ -129,7 +135,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
-        String toUserId = json.get("to").asText();
+        String toUserCode = json.get("to").asText();
         String content = json.get("msg").asText();
         String type = json.has("type") ? json.get("type").asText() : "text"; // 默认是文本
 
@@ -139,14 +145,14 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             return;
         }
         //找到接收方session
-        WebSocketSession targetSession = ONLINE_USERS.get(toUserId);
+        WebSocketSession targetSession = ONLINE_USERS.get(toUserCode);
 
 
 
 
         ChatMessageEntity chatMessageEntity = new ChatMessageEntity();
-        chatMessageEntity.setSender(fromUserId);
-        chatMessageEntity.setReceiver(toUserId);
+        chatMessageEntity.setSender(userCode);
+        chatMessageEntity.setReceiver(toUserCode);
         chatMessageEntity.setContent(content);
         chatMessageEntity.setType(type);
         chatMessageEntity.setRevoked(0);
@@ -155,7 +161,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
 
         ObjectNode resp = mapper.createObjectNode();
-        resp.put("from", fromUserId);
+        resp.put("from", userCode);
         resp.put("msg", content);
         resp.put("type", type);
 
@@ -165,7 +171,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             throw new BusinessException("实时聊天插入失败");
         }
         //发给对方
-        if (targetSession != null && !targetSession.isOpen()) {
+        if (targetSession != null && targetSession.isOpen()) {
             targetSession.sendMessage(new TextMessage(resp.toString()));
         }else {
             System.out.println("对方不在线，消息已保存数据库");
@@ -190,7 +196,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 //            ONLINE_USERS.remove(removeKey);
 //            System.out.println("用户下线：" + removeKey);
 //        }
-
+        String userId = (String) session.getAttributes().get("userId");
+        if (userId != null) {
+            String userCode = userMapper.selectCodeByUname(userId);
+            GlobalWsSessionManager.remove(userCode, session);
+        }
         ONLINE_USERS.entrySet().removeIf(
                 entry -> entry.getValue().equals(session)
         );

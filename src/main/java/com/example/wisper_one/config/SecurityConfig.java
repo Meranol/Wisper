@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * File: SecurityConfig
  * Author: [周玉诚]
  * Date: 2026/1/10
- * Description:
+ * Description:用户密码哈希值加密
  */
 @Configuration
 public class SecurityConfig { //用户密码哈希值加密

@@ -8,12 +8,14 @@ import com.example.wisper_one.Login.POJO.UserPo;
 import com.example.wisper_one.Login.service.UserService;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import com.example.wisper_one.utils.jwt.JwtTokenUtil;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -28,7 +30,8 @@ public class UserController {
 
     @Resource
     private UserService userService;
-
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
     @PostMapping("/register")
     public Result<UserPo> register(@RequestBody RegRequestDto regRequest) {
         UserPo user = userService.register(regRequest);
@@ -41,6 +44,11 @@ public class UserController {
 
         UserPo user = userService.login(loginRequest);
         String token = JwtTokenUtil.generateToken(user.getUsername(),user.getPublicId(), 200000 * 960000000 * 6000000 * 1000000L);
+        String redisKey = "login:token:" + user.getPublicId();
+        redisTemplate.opsForValue().set(redisKey, token, Duration.ofHours(2));
+
+
+
 
         Map<String, Object> data = new HashMap<>();
         data.put("token", token);
