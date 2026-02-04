@@ -46,6 +46,13 @@ public class GlobalWsSessionManager {
             }
         }
     }
+    public static Set<WebSocketSession> getSessions(String userCode) {
+        Set<WebSocketSession> set = USER_SESSIONS.get(userCode);
+        if (set == null) {
+            return Set.of();
+        }
+        return set;
+    }
 
 
 
