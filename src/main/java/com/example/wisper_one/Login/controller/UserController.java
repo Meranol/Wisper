@@ -8,10 +8,12 @@ import com.example.wisper_one.Login.POJO.UserPo;
 import com.example.wisper_one.Login.service.UserService;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import com.example.wisper_one.utils.jwt.JwtTokenUtil;
+import com.example.wisper_one.websocket.util.GlobalWsSessionManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.socket.CloseStatus;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -43,8 +45,15 @@ public class UserController {
     public Result<Map<String, Object>> login(@RequestBody LoginRequestDto loginRequest) {
 
         UserPo user = userService.login(loginRequest);
-        String token = JwtTokenUtil.generateToken(user.getUsername(),user.getPublicId(), 200000 * 960000000 * 6000000 * 1000000L);
         String redisKey = "login:token:" + user.getPublicId();
+
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
+            redisTemplate.delete(redisKey);
+
+            GlobalWsSessionManager.kick(user.getPublicId(), CloseStatus.NORMAL);
+        }
+
+        String token = JwtTokenUtil.generateToken(user.getUsername(),user.getPublicId(), 200000 * 960000000 * 6000000 * 1000000L);
         redisTemplate.opsForValue().set(redisKey, token, Duration.ofHours(2));
 
 

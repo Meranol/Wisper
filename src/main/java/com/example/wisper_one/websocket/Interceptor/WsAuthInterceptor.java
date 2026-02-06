@@ -75,8 +75,10 @@ public class WsAuthInterceptor implements HandshakeInterceptor {
 
 
         // 4. Redis 校验，是否已经被踢
-        if (!Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
-            return false; // token 被踢出或过期
+        String redisToken = redisTemplate.opsForValue().get(redisKey);
+
+        if (redisToken == null || !redisToken.equals(token)) {
+            return false; // 被顶号 / token 失效
         }
 
         attributes.put("userId", result.getData());

@@ -4,7 +4,7 @@ import com.example.wisper_one.Login.mapper.UserMapper;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import com.example.wisper_one.websocket.chat.POJO.ChatMessageEntity;
 import com.example.wisper_one.websocket.chat.mapper.ChatMessageMapper;
-import com.example.wisper_one.websocket.chat_group.util.GlobalWsSessionManager;
+import com.example.wisper_one.websocket.util.GlobalWsSessionManager;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -17,9 +17,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * File: ChatWebSocketHandler
@@ -89,7 +87,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
-        GlobalWsSessionManager.add(userCode, session);
         //顶号设计不合理
 //        if (old != null && old.isOpen()) {
 //            old.sendMessage(new TextMessage("账号已经在别处登录"));
@@ -112,8 +109,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         }
 
 
-
-        GlobalWsSessionManager.add(userId, session);
+        GlobalWsSessionManager.add(userCode, session);
 
         System.out.println("上线了" + userCode);
 
@@ -193,11 +189,16 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 //            ONLINE_USERS.remove(removeKey);
 //            System.out.println("用户下线：" + removeKey);
 //        }
+
         String userId = (String) session.getAttributes().get("userId");
         if (userId != null) {
             String userCode = userMapper.selectCodeByUname(userId);
             GlobalWsSessionManager.remove(userCode, session);
+
+
+
         }
+
 
         System.out.println("用户下线：" + status);
     }

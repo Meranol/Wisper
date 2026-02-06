@@ -3,19 +3,16 @@ package com.example.wisper_one.websocket.chat_group.service.servicempl;
 import com.example.wisper_one.Login.POJO.UserPo;
 import com.example.wisper_one.Login.mapper.UserMapper;
 import com.example.wisper_one.utils.Exception.BusinessException;
-import com.example.wisper_one.websocket.chat.mapper.ChatMessageMapper;
 import com.example.wisper_one.websocket.chat_group.POJO.ChatGroupEntity;
 import com.example.wisper_one.websocket.chat_group.POJO.ChatGroupMemberEntity;
 import com.example.wisper_one.websocket.chat_group.mapper.ChatGroupCreateMapper;
 import com.example.wisper_one.websocket.chat_group.mapper.ChatGroupMemberMapper;
 import com.example.wisper_one.websocket.chat_group.service.ChatCreateService;
-import com.example.wisper_one.websocket.chat_group.util.GroupCodeUtil;
-import org.springframework.security.core.Authentication;
+import com.example.wisper_one.websocket.util.GroupCodeUtil;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.net.Authenticator;
 
 /**
  * File: ChatCreateServicempl

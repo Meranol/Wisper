@@ -1,6 +1,7 @@
-package com.example.wisper_one.websocket.chat_group.util;
+package com.example.wisper_one.websocket.util;
 
 import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Description:
  */
 public class GlobalWsSessionManager {
-    private static final Map<String, Set<WebSocketSession>> USER_SESSIONS
+    public static final Map<String, Set<WebSocketSession>> USER_SESSIONS
             = new ConcurrentHashMap<>();
 
 
@@ -46,6 +47,13 @@ public class GlobalWsSessionManager {
             }
         }
     }
+
+                    //Set集合不能包含重复的元素
+                //    特性	数组	Set
+                //    能装多个元素	✅	✅
+                //    能重复	✅	❌
+                //    有下标	✅	❌
+                //    自动扩容	❌	✅
     public static Set<WebSocketSession> getSessions(String userCode) {
         Set<WebSocketSession> set = USER_SESSIONS.get(userCode);
         if (set == null) {
@@ -53,6 +61,7 @@ public class GlobalWsSessionManager {
         }
         return set;
     }
+
 
 
 

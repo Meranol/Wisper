@@ -4,7 +4,8 @@ import com.example.wisper_one.Login.mapper.UserMapper;
 import com.example.wisper_one.administrator.kick.DTO.KickDTO;
 import com.example.wisper_one.administrator.kick.service.Kickservice;
 import com.example.wisper_one.utils.Exception.BusinessException;
-import com.example.wisper_one.websocket.chat_group.util.GlobalWsSessionManager;
+import com.example.wisper_one.websocket.online.OnlineWebSocketHandler;
+import com.example.wisper_one.websocket.util.GlobalWsSessionManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,8 @@ public class Kickservicempl implements Kickservice {
         if (userCode != null) {
             GlobalWsSessionManager.kick(userCode,
                     org.springframework.web.socket.CloseStatus.POLICY_VIOLATION.withReason("管理员强制下线"));
+            OnlineWebSocketHandler.broadcastOffline(userCode);
+
         }
         return tokenDeleted || userCode != null;
     }

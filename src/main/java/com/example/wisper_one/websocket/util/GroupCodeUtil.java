@@ -1,4 +1,4 @@
-package com.example.wisper_one.websocket.chat_group.util;
+package com.example.wisper_one.websocket.util;
 
 import java.security.SecureRandom;
 

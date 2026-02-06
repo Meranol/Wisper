@@ -6,7 +6,7 @@ import com.example.wisper_one.websocket.chat_group.POJO.ChatGroupMemberEntity;
 import com.example.wisper_one.websocket.chat_group.POJO.ChatGroupMessageEntity;
 import com.example.wisper_one.websocket.chat_group.mapper.ChatGroupMapper;
 import com.example.wisper_one.websocket.chat_group.mapper.ChatGroupMessageMapper;
-import com.example.wisper_one.websocket.chat_group.util.GlobalWsSessionManager;
+import com.example.wisper_one.websocket.util.GlobalWsSessionManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,6 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
