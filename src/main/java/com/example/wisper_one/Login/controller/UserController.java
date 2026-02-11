@@ -5,6 +5,7 @@ import com.example.wisper_one.Login.DTO.request.LoginRequestDto;
 import com.example.wisper_one.Login.DTO.request.RegRequestDto;
 import com.example.wisper_one.Login.common.Result;
 import com.example.wisper_one.Login.POJO.UserPo;
+import com.example.wisper_one.Login.mapper.UserMapper;
 import com.example.wisper_one.Login.service.UserService;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import com.example.wisper_one.utils.jwt.JwtTokenUtil;
@@ -32,6 +33,8 @@ public class UserController {
 
     @Resource
     private UserService userService;
+    @Resource
+    private UserMapper userMapper;
     @Resource
     private RedisTemplate<String, String> redisTemplate;
     @PostMapping("/register")
@@ -69,6 +72,27 @@ public class UserController {
 
         return Result.success("登录成功",data);
     }
+    @PostMapping("/logout")
+    public Result<?> logout() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null||!authentication.isAuthenticated()) {
+            return Result.failure("未登录");
+        }
+
+        String username = (String) authentication.getPrincipal();
+        String userCode = userMapper.selectCodeByUname(username); // 假设 UserService 有此方法
+        String redisKey = "login:token:" + userCode;
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
+            redisTemplate.delete(redisKey);
+        }
+        GlobalWsSessionManager.kick(userCode, CloseStatus.NORMAL);
+        SecurityContextHolder.clearContext();
+
+        return Result.success("登出成功");
+    }
+
+
 
     @GetMapping("/checkusername")
     public Result<Boolean> checkUsername(@Valid CheckUnameDto checkUname) {

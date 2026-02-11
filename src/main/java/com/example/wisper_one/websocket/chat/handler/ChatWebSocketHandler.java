@@ -8,6 +8,7 @@ import com.example.wisper_one.websocket.util.GlobalWsSessionManager;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -73,6 +74,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     private UserMapper userMapper;
 
     private final ObjectMapper mapper = new ObjectMapper();
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -87,13 +90,13 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
-        //顶号设计不合理
+        //顶号(我的老代码)
 //        if (old != null && old.isOpen()) {
 //            old.sendMessage(new TextMessage("账号已经在别处登录"));
 //            old.close();
 //        }
 
-        List<ChatMessageEntity> message = chatMessageMapper.checkMessageRead(userId);
+        List<ChatMessageEntity> message = chatMessageMapper.checkMessageRead(userCode);
 
         ObjectMapper mapper = new ObjectMapper();
         for (ChatMessageEntity msg : message) {
@@ -122,6 +125,25 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         String fromUserId = (String) session.getAttributes().get("userId");
         String fromUserCode = userMapper.selectCodeByUname(fromUserId);
 
+
+        String redisKey = "login:token:" + fromUserCode;
+        Boolean exists = redisTemplate.hasKey(redisKey);
+        if (!Boolean.TRUE.equals(exists)) {
+
+            ObjectNode expireMsg = mapper.createObjectNode();
+            expireMsg.put("error", "登录已过期，请重新登录");
+
+            session.sendMessage(new TextMessage(expireMsg.toString()));
+
+            // 从全局管理器移除
+            GlobalWsSessionManager.remove(fromUserCode, session);
+
+            // 强制关闭
+            session.close(CloseStatus.POLICY_VIOLATION.withReason("login expired"));
+
+            return;
+        }
+
         JsonNode json = mapper.readTree(message.getPayload());
         if (!json.has("to") || !json.has("msg")) {
             session.sendMessage(new TextMessage("消息格式错误"));
@@ -132,6 +154,10 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         String content = json.get("msg").asText();
         String type = json.has("type") ? json.get("type").asText() : "text";
 
+
+
+
+
         if (content.isEmpty() || content.length() > 2000) {
             session.sendMessage(new TextMessage("消息内容不合法"));
             return;
@@ -140,6 +166,13 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         // 保存消息到数据库
         ChatMessageEntity chatMessageEntity = new ChatMessageEntity();
         chatMessageEntity.setSender(fromUserCode);
+        String toresult = userMapper.selectUnameByCode(toUserCode);
+        if (toresult==null||toresult.isEmpty()) {
+            ObjectNode errorResp = mapper.createObjectNode();
+            errorResp.put("error", "发送失败：该用户不存在");
+            session.sendMessage(new TextMessage(errorResp.toString()));
+            return;
+        }
         chatMessageEntity.setReceiver(toUserCode);
         chatMessageEntity.setContent(content);
         chatMessageEntity.setType(type);
@@ -149,7 +182,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         int rows = chatMessageMapper.insert(chatMessageEntity);
         if (rows != 1) {
-            throw new BusinessException("实时聊天插入失败");
+            session.sendMessage(new TextMessage("实时聊天插入失败"));
+//            throw new BusinessException("实时聊天插入失败");
         }
 
         // 通过 GlobalWsSessionManager 发送消息

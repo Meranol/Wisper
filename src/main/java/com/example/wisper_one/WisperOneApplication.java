@@ -3,7 +3,7 @@ package com.example.wisper_one;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 
 @SpringBootApplication
@@ -12,9 +12,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         "com.example.wisper_one.websocket.chat.mapper",
         "com.example.wisper_one.websocket.chat_group.mapper",
         "com.example.wisper_one.websocket.chat.friend.mapper",
-        "com.example.wisper_one.websocket.chat_group.applyjoin.mapper"
+        "com.example.wisper_one.websocket.chat_group.applyjoin.mapper",
+        "com.example.wisper_one.finduserlist.mapper"
 })
+@EnableScheduling
+/**创建一个调度线程池
 
+ 把带 @Scheduled 的方法注册进去
+
+ 用定时任务线程循环触发**/
 
 
 /**

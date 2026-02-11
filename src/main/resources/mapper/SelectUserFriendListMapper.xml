@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.finduserlist.mapper.SelectUserFriendListMapper">
+
+    <!-- 好友列表返回字段映射 -->
+    <resultMap id="FriendListResultMap" type="com.example.wisper_one.finduserlist.POJO.SelectUserFriendListDTO">
+        <result property="friendCode" column="friend_code"/>
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar"/>
+        <result property="latestMsg" column="last_message"/>
+        <result property="latestMsgType" column="last_msg_type"/>
+        <result property="latestMsgTime" column="last_msg_time"/>
+        <result property="unreadCount" column="unread_count"/>
+    </resultMap>
+
+    <select id="selectFriendListWithLastMsg"
+            parameterType="String"
+            resultMap="FriendListResultMap">
+        SELECT
+            CASE WHEN f.user_code = #{userCode} THEN f.friend_code ELSE f.user_code END AS friend_code,
+            u.nickname,
+            u.avatar_url AS avatar,
+            m.content AS last_message,
+            m.type AS last_msg_type,
+            DATE_FORMAT(m.create_time, '%Y-%m-%d %H:%i:%s') AS last_msg_time,
+            IFNULL(unread.unread_count, 0) AS unread_count
+        FROM friend_relation f
+                 JOIN users u ON u.public_id = (CASE WHEN f.user_code = #{userCode} THEN f.friend_code ELSE f.user_code END)
+                 LEFT JOIN chat_message m
+                           ON m.id = (
+                               SELECT id
+                               FROM chat_message
+                               WHERE (sender = (CASE WHEN f.user_code = #{userCode} THEN f.friend_code ELSE f.user_code END)
+                                   AND receiver = #{userCode})
+                                  OR (sender = #{userCode} AND receiver = (CASE WHEN f.user_code = #{userCode} THEN f.friend_code ELSE f.user_code END))
+                               ORDER BY create_time DESC
+            LIMIT 1
+            )
+            LEFT JOIN (
+        SELECT sender, COUNT(*) AS unread_count
+        FROM chat_message
+        WHERE receiver = #{userCode} AND read_state = 0
+        GROUP BY sender
+            ) unread ON unread.sender = (CASE WHEN f.user_code = #{userCode} THEN f.friend_code ELSE f.user_code END)
+        WHERE (f.user_code = #{userCode} OR f.friend_code = #{userCode}) AND f.status = 1
+        ORDER BY last_msg_time DESC;
+
+    </select>
+
+</mapper>

@@ -48,12 +48,7 @@ public class GlobalWsSessionManager {
         }
     }
 
-                    //Set集合不能包含重复的元素
-                //    特性	数组	Set
-                //    能装多个元素	✅	✅
-                //    能重复	✅	❌
-                //    有下标	✅	❌
-                //    自动扩容	❌	✅
+
     public static Set<WebSocketSession> getSessions(String userCode) {
         Set<WebSocketSession> set = USER_SESSIONS.get(userCode);
         if (set == null) {
@@ -63,6 +58,9 @@ public class GlobalWsSessionManager {
     }
 
 
+    public static Set<String> getOnlineUserCodes() {
+        return USER_SESSIONS.keySet();
+    }
 
 
 
