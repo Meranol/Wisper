@@ -21,6 +21,8 @@ public class OnlineWebSocketHandler extends TextWebSocketHandler {
         String userCode = (String) session.getAttributes().get("userCode");
         if (userCode != null) {
             GlobalWsSessionManager.add(userCode, session);
+            sendOnlineList(session);
+
             broadcast("ONLINE", userCode);
         }
     }
@@ -64,4 +66,19 @@ public class OnlineWebSocketHandler extends TextWebSocketHandler {
     public static void broadcastOffline(String userCode) {
         broadcast("OFFLINE", userCode);
     }
+
+    private void sendOnlineList(WebSocketSession session) {
+        try {
+            Set<String> onlineUsers = GlobalWsSessionManager.USER_SESSIONS.keySet();
+
+            for (String code : onlineUsers) {
+                ObjectNode msg = mapper.createObjectNode();
+                msg.put("event", "ONLINE");
+                msg.put("userCode", code);
+
+                session.sendMessage(new TextMessage(msg.toString()));
+            }
+        } catch (Exception ignored) {}
+    }
+
 }

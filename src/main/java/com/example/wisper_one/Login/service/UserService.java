@@ -1,8 +1,8 @@
 package com.example.wisper_one.Login.service;
 
-import com.example.wisper_one.Login.DTO.request.CheckUnameDto;
-import com.example.wisper_one.Login.DTO.request.LoginRequestDto;
-import com.example.wisper_one.Login.DTO.request.RegRequestDto;
+import com.example.wisper_one.Login.DTO.CheckUnameDto;
+import com.example.wisper_one.Login.DTO.LoginRequestDto;
+import com.example.wisper_one.Login.DTO.RegRequestDto;
 import com.example.wisper_one.Login.POJO.UserPo;
 /**
  * File: UserService

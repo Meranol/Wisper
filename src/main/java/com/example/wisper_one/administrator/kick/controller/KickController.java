@@ -1,18 +1,14 @@
 package com.example.wisper_one.administrator.kick.controller;
 
-import com.example.wisper_one.Login.DTO.request.LoginRequestDto;
 import com.example.wisper_one.Login.common.Result;
-import com.example.wisper_one.Login.mapper.UserMapper;
 import com.example.wisper_one.administrator.kick.DTO.KickDTO;
 import com.example.wisper_one.administrator.kick.service.Kickservice;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**

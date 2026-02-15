@@ -1,8 +1,8 @@
 package com.example.wisper_one.Login.controller;
 
-import com.example.wisper_one.Login.DTO.request.CheckUnameDto;
-import com.example.wisper_one.Login.DTO.request.LoginRequestDto;
-import com.example.wisper_one.Login.DTO.request.RegRequestDto;
+import com.example.wisper_one.Login.DTO.CheckUnameDto;
+import com.example.wisper_one.Login.DTO.LoginRequestDto;
+import com.example.wisper_one.Login.DTO.RegRequestDto;
 import com.example.wisper_one.Login.common.Result;
 import com.example.wisper_one.Login.POJO.UserPo;
 import com.example.wisper_one.Login.mapper.UserMapper;
@@ -57,7 +57,7 @@ public class UserController {
         }
 
         String token = JwtTokenUtil.generateToken(user.getUsername(),user.getPublicId(), 200000 * 960000000 * 6000000 * 1000000L);
-        redisTemplate.opsForValue().set(redisKey, token, Duration.ofHours(2));
+        redisTemplate.opsForValue().set(redisKey, token, Duration.ofHours(200000));
 
 
 

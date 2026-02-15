@@ -1,4 +1,4 @@
-package com.example.wisper_one.Login.DTO.request;
+package com.example.wisper_one.Login.DTO;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

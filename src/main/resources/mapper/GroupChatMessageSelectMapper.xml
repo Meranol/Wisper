@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.websocket.showchatmessage.chatmessage.Mapper.GroupChatMessageSelectMapper">
+    <resultMap id="GroupMessageResultMap" type="com.example.wisper_one.websocket.showchatmessage.chatmessage.POJO.GroupChatMessageSelectVo">
+        <id property="id" column="id"/>
+        <result property="sender" column="sender_id"/>
+        <result property="groupCode" column="group_code"/>
+        <result property="content" column="content"/>
+        <result property="type" column="type"/>
+        <result property="recalled" column="is_recalled"/>
+        <result property="recalledBy" column="recall_by"/>
+        <result property="revokedAt" column="revokedAt"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, sender_id, group_code, content, type,
+        is_recalled, recall_by, revokedAt, create_time
+    </sql>
+    <select id="selectGroupMessages" resultMap="GroupMessageResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_group_message
+        <where>
+            group_code = #{dto.groupCode}
+            <if test="dto.lastId != null and dto.lastId > 0">
+                AND id &lt; #{dto.lastId}
+            </if>
+            <if test="dto.message != null and dto.message != ''">
+                AND content LIKE CONCAT('%', #{dto.message}, '%')
+            </if>
+        </where>
+        ORDER BY id DESC
+        LIMIT #{dto.pageSize}
+    </select>
+</mapper>

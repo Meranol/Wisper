@@ -20,9 +20,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class GlobalCorsConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+        http  .cors(cors -> {})   // 🔥 这一行必须加
+
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .authorizeHttpRequests(auth -> auth  .anyRequest().permitAll())
                 .httpBasic().disable()
                 .formLogin().disable();
         return http.build();
@@ -32,7 +33,7 @@ public class GlobalCorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOriginPattern("*"); // 允许所有域名
+        config.addAllowedOriginPattern("http://localhost:5173"); // 允许所有域名
         config.setAllowCredentials(true); // 允许携带 Cookie
         config.addAllowedMethod("*"); // 允许所有请求方法
         config.addAllowedHeader("*"); // 允许所有请求头
