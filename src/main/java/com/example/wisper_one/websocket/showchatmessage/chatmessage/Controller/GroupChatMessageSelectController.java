@@ -28,7 +28,7 @@ public class GroupChatMessageSelectController {
 
     @Resource
     private GroupChatMessageSelectService groupChatMessageSelectService;
-    @PostMapping("/list")  // 添加这个注解
+    @PostMapping("/list")
     public Result<?> list(@RequestBody GroupChatMessageSelectDto dto){
 
         List<GroupChatMessageSelectVo> list = groupChatMessageSelectService.getGroupMessages(dto);

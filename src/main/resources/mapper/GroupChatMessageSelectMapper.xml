@@ -24,6 +24,7 @@
         <include refid="Base_Column_List"/>
         FROM chat_group_message
         <where>
+            is_recalled = 0 and
             group_code = #{dto.groupCode}
             <if test="dto.lastId != null and dto.lastId > 0">
                 AND id &lt; #{dto.lastId}

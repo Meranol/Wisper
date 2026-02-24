@@ -41,18 +41,15 @@ public class GroupChatMessageSelectmpl implements GroupChatMessageSelectService 
         }
 
         if (dto.getPageSize() == null || dto.getPageSize() <= 0) {
-            dto.setPageSize(20); // 默认每页20条
+            dto.setPageSize(20);
         }
 
-        // 5. 限制最大分页大小，防止性能问题
         if (dto.getPageSize() > 100) {
             dto.setPageSize(100);
         }
 
-        // 6. 设置当前用户编码（可用于后续扩展）
         dto.setUserCode(usercode);
 
-        // 7. 执行查询
         return groupChatMessageSelectMapper.selectGroupMessages(dto);
     }
 }
