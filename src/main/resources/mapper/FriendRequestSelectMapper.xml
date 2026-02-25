@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.selectRequest.selectfriendrequest.mapper.FriendRequestSelectMapper">
+
+
+    <select id="friendRequestEntityList"
+            resultType="com.example.wisper_one.websocket.chat.friend.POJO.FriendRequestEntity">
+        SELECT *
+        FROM friend_request
+        <where>
+            <if test="userCode != null and userCode != ''">
+                (from_user_code = #{userCode} OR to_user_code = #{userCode})
+            </if>
+        </where>
+        ORDER BY create_time DESC
+
+    </select>
+</mapper>

@@ -3,16 +3,19 @@ package com.example.wisper_one.Login.service.servicempl;
 import com.example.wisper_one.Login.DTO.CheckUnameDto;
 import com.example.wisper_one.Login.DTO.LoginRequestDto;
 import com.example.wisper_one.Login.DTO.RegRequestDto;
+import com.example.wisper_one.Login.DTO.SelectuserDTO;
 import com.example.wisper_one.Login.POJO.UserPo;
 import com.example.wisper_one.Login.mapper.UserMapper;
 import com.example.wisper_one.Login.service.UserService;
 import com.example.wisper_one.Login.usercode.service.UserCodeService;
+import com.example.wisper_one.userUpdata.ImageController.ImageUploadController;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.time.LocalDateTime;
 /**
  * File: UserServicelmpl
@@ -43,6 +46,8 @@ public class UserServicelmpl implements UserService {
         }
 
         UserPo user = new UserPo();
+
+        user.setAvatarUrl(regRequest.getAvatarUrl());
         user.setUsername(regRequest.getUsername());
         user.setEmail(regRequest.getEmail());
         user.setPublicId(userCodeService.generateUserCode());
@@ -55,11 +60,47 @@ public class UserServicelmpl implements UserService {
         user.setCreatedAt(now);
         user.setUpdatedAt(now);
 
-      int rows =   userMapper.insertUser(user);
+        String tempAvatarUrl = regRequest.getAvatarUrl(); // 前端传来的预上传头像URL
+        String finalAvatarUrl = null;
+        try {
+            if (tempAvatarUrl != null && !tempAvatarUrl.trim().isEmpty()) {
+                String filename = tempAvatarUrl.substring(tempAvatarUrl.lastIndexOf("/") + 1);
+                File tempFile = new File("E:/wisperimage/temp/" + filename);
+                if (tempFile.exists()) {
+                    File finalDir = new File("E:/wisperimage/user/");
+                    if (!finalDir.exists()) finalDir.mkdirs();
 
-        if (rows !=1) {
-            throw new BusinessException("注册插入失败");
+                    File finalFile = new File(finalDir, filename);
+                    if (tempFile.renameTo(finalFile)) {
+                        finalAvatarUrl = "/uploads/user/" + filename;
+                    } else {
+                        throw new BusinessException("头像移动失败");
+                    }
+                }
+            }
+
+            user.setAvatarUrl(finalAvatarUrl);
+
+            int rows = userMapper.insertUser(user);
+            if (rows != 1) {
+                // 注册失败删除已移动头像
+                if (finalAvatarUrl != null) {
+                    File file = new File("E:/wisperimage/user/" + finalAvatarUrl.substring(finalAvatarUrl.lastIndexOf("/") + 1));
+                    if (file.exists()) file.delete();
+                }
+                throw new BusinessException("注册插入失败");
+            }
+
+        } catch (Exception e) {
+            // 出现异常 删除 temp 文件
+            if (tempAvatarUrl != null && !tempAvatarUrl.trim().isEmpty()) {
+                File file = new File("E:/wisperimage/temp/" + tempAvatarUrl.substring(tempAvatarUrl.lastIndexOf("/") + 1));
+                if (file.exists()) file.delete();
+            }
+            throw e;
         }
+
+
         return user;
     }
 
@@ -85,4 +126,27 @@ public class UserServicelmpl implements UserService {
 
         return user;
     }
+
+    @Override
+    public SelectuserDTO getUserByPublicId(String publicId) {
+        System.out.println("publicId: " + publicId);
+        UserPo user = userMapper.selectUserByPublicId(publicId);
+
+        if (user == null) {
+            throw new BusinessException("用户不存在");
+        }
+
+        SelectuserDTO dto = new SelectuserDTO();
+        dto.setPublicId(user.getPublicId());
+        dto.setUsername(user.getUsername());
+        dto.setNickname(user.getNickname());
+        dto.setAvatarUrl(user.getAvatarUrl());
+        dto.setEmail(user.getEmail());
+        dto.setVip(user.getVip());
+
+        return dto;
+    }
+
+
 }
+

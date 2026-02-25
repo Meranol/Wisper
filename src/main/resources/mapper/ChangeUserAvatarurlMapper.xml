@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.userUpdata.changeuseravatarurl.mapper.ChangeUserAvatarurlMapper">
+
+    <!-- 根据 public_id 更新用户头像 -->
+    <update id="changeUserAvatarurlDto">
+        UPDATE users
+        SET avatar_url = #{avatarUrl}, updated_at = NOW()
+        WHERE public_id = #{public_id}
+    </update>
+
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.selectRequest.selectgrouprequest.mapper.GroupRequestSelectMapper">
+
+    <select id="selectGroupRequest"
+            resultType="com.example.wisper_one.selectRequest.selectgrouprequest.DTO.SelectGroupRequestDTO">
+
+        SELECT
+        mr.id,
+        mr.from_user_code,
+        mr.to_group,
+        mr.status,
+        mr.create_time,
+        mr.remark,
+        mr.handlername,
+        mr.handle_time
+        FROM member_request mr
+
+        <where>
+
+            mr.status = 0
+
+            <if test="userCode != null and userCode != ''">
+                AND EXISTS (
+                SELECT 1
+                FROM chat_group_member gm
+                WHERE gm.group_code COLLATE utf8mb4_0900_ai_ci = mr.to_group
+                AND gm.user_code COLLATE utf8mb4_0900_ai_ci = #{userCode}
+                AND gm.status = 1
+                AND gm.role IN (1,2)
+                )
+            </if>
+
+        </where>
+
+        ORDER BY mr.create_time DESC
+
+    </select>
+
+</mapper>

@@ -14,7 +14,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "com.example.wisper_one.websocket.chat.friend.mapper",
         "com.example.wisper_one.websocket.chat_group.applyjoin.mapper",
         "com.example.wisper_one.finduserlist.mapper",
-        "com.example.wisper_one.websocket.showchatmessage.chatmessage.Mapper"
+        "com.example.wisper_one.websocket.showchatmessage.chatmessage.Mapper",
+        "com.example.wisper_one.userUpdata.changeuseravatarurl.mapper",
+        "com.example.wisper_one.selectRequest.selectfriendrequest.mapper",
+        "com.example.wisper_one.selectRequest.selectgrouprequest.mapper"
 })
 @EnableScheduling
 /**创建一个调度线程池

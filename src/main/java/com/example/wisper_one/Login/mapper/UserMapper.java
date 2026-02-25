@@ -23,7 +23,8 @@ public interface UserMapper {
 
     //更具用户名查询user_code
     String selectCodeByUname(@Param("Uname") String uname);
-
+    //更具usercode查询用户
+    UserPo selectUserByPublicId(@Param("publicId") String publicId);
     //更具用户名查询user_code
     String selectUnameByCode(@Param("Code") String code);
     //查询vip用户

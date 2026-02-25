@@ -18,7 +18,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // 我将/uploads/images/** 映射到 E:/wisperimage/
 
         //用法http://localhost:8089/uploads/images/c2956cbf368c4e9ca74946c377eae56b.jpg
-        registry.addResourceHandler("/uploads/images/**")
+        registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:E:/wisperimage/");
     }
 }

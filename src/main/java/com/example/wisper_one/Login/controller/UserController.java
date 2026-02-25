@@ -3,6 +3,7 @@ package com.example.wisper_one.Login.controller;
 import com.example.wisper_one.Login.DTO.CheckUnameDto;
 import com.example.wisper_one.Login.DTO.LoginRequestDto;
 import com.example.wisper_one.Login.DTO.RegRequestDto;
+import com.example.wisper_one.Login.DTO.SelectuserDTO;
 import com.example.wisper_one.Login.common.Result;
 import com.example.wisper_one.Login.POJO.UserPo;
 import com.example.wisper_one.Login.mapper.UserMapper;
@@ -42,7 +43,20 @@ public class UserController {
         UserPo user = userService.register(regRequest);
         return Result.success("注册成功",user);
     }
+    //查询个人用户信息
 
+    @PostMapping("/info")
+    public Result<SelectuserDTO> getUserInfo(@RequestBody SelectuserDTO selectuserDTO) {
+
+        if (selectuserDTO.getPublicId() == null || selectuserDTO.getPublicId().isEmpty()) {
+            throw new BusinessException("publicId不能为空");
+        }
+
+        SelectuserDTO user =
+                userService.getUserByPublicId(selectuserDTO.getPublicId());
+
+        return Result.success("查询成功", user);
+    }
 
     @PostMapping("/login")
     public Result<Map<String, Object>> login(@RequestBody LoginRequestDto loginRequest) {
@@ -58,8 +72,6 @@ public class UserController {
 
         String token = JwtTokenUtil.generateToken(user.getUsername(),user.getPublicId(), 200000 * 960000000 * 6000000 * 1000000L);
         redisTemplate.opsForValue().set(redisKey, token, Duration.ofHours(200000));
-
-
 
 
         Map<String, Object> data = new HashMap<>();

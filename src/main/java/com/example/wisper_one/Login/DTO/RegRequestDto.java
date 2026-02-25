@@ -1,5 +1,7 @@
 package com.example.wisper_one.Login.DTO;
 
+import lombok.Data;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -10,6 +12,7 @@ import javax.validation.constraints.Size;
  * Date: 2026/1/10
  * Description:
  */
+@Data
 public class RegRequestDto {
     @NotBlank(message = "用户名不能为空")
     @Size(min  =3,max=20,message="用户名长度3-20位")
@@ -26,6 +29,8 @@ public class RegRequestDto {
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d).+$", message = "密码必须包含字母和数字")
     private String password;
 
+
+    private String avatarUrl;
 
    public RegRequestDto() {}
 

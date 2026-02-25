@@ -1,4 +1,4 @@
-package com.example.wisper_one.websocket.ImageController;
+package com.example.wisper_one.userUpdata.ImageController;
 
 import com.example.wisper_one.utils.Exception.BusinessException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +26,9 @@ public class ImageUploadController {
 
 
     @PostMapping("/image")
-    public Map<String,Object> uploadImage(@RequestParam("file") MultipartFile file)
+    public Map<String,Object> uploadImage(@RequestParam("file") MultipartFile file,
+                                            @RequestParam("type") String type
+    )
             throws IOException {
 
         if (file.isEmpty()) {
@@ -46,6 +48,18 @@ public class ImageUploadController {
 
 
         String baseDir = "E:/wisperimage/";
+
+        if ("user".equals(type)) {
+            baseDir += "user/";
+        }else if ("group".equals(type)) {
+            baseDir += "group/";
+        }else if ("chat".equals(type)) {
+            baseDir += "chat/";
+        }else if ("temp".equals(type)) {
+            baseDir += "temp/";
+        } else {
+            throw new BusinessException("非法上传类型");
+        }
         File dir = new File(baseDir);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -57,7 +71,8 @@ public class ImageUploadController {
 
 
         Map<String, Object> result = new HashMap<>();
-        result.put("url", "/uploads/images/" + filename);
+        // 返回前端可访问的 URL
+        result.put("url", "/uploads/" + type + "/" + filename);
         return result;
 
 

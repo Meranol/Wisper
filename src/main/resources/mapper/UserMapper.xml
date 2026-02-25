@@ -33,7 +33,6 @@
     </select>
 
 
-
     <select id="selectUnameByCode" resultType="String" parameterType="String">
         SELECT username FROM users WHERE public_id = #{Code}
     </select>
@@ -42,7 +41,17 @@
         SELECT vip FROM users WHERE public_id = #{Code}
     </select>
 
-
+    <select id="selectUserByPublicId" resultType="com.example.wisper_one.Login.POJO.UserPo">
+        SELECT
+            public_id,
+            username,
+            nickname,
+            avatar_url,
+            email,
+            vip
+        FROM users
+        WHERE public_id = #{publicId}
+    </select>
 
     <insert id="insertUser" parameterType="com.example.wisper_one.Login.POJO.UserPo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users(username, email, public_id, password_hash, salt, nickname,vip, status, created_at, updated_at)
@@ -62,5 +71,7 @@
     <select id="existsByEmail" parameterType="String" resultType="int">
         SELECT COUNT(1) FROM users WHERE email = #{email}
     </select>
+
+
 
 </mapper>

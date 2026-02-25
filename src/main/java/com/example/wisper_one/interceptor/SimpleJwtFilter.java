@@ -55,12 +55,16 @@ public class SimpleJwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        //这里他妈给访问图图片放行
-        if (path.startsWith("/uploads/images/")) {
+        // 这里放行上传的图片
+        if (path.startsWith("/uploads/")) {
             chain.doFilter(request, response);
             return;
         }
-
+        // 只放行注册前临时头像上传接口 /api/upload/image?type=temp
+        if (path.equals("/api/upload/image") && "temp".equals(request.getParameter("type"))) {
+            chain.doFilter(request, response);
+            return;
+        }
         //放行浏览器OPTIONS请求
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             chain.doFilter(request, response);
