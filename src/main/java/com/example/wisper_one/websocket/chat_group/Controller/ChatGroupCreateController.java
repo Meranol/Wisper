@@ -36,6 +36,7 @@ public class ChatGroupCreateController {
             throw new BusinessException("群名称不能为空");
         }
 
+
         ChatGroupEntity chatGroup = new ChatGroupEntity();
         chatGroup.setName(name);
 

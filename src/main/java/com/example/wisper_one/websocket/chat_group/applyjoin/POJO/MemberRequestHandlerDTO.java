@@ -24,4 +24,6 @@ public class MemberRequestHandlerDTO {
 
     /** 处理时间（后端填） */
     private LocalDateTime handleTime;
+
+
 }

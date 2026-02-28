@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.RedPacket.mapper.RedPacketMapper">
+    <insert id="insert">
+        INSERT INTO red_packet
+        (user_code, total_amount, total_count, remain_amount, remain_count, type, status, expire_time, version, created_at, updated_at)
+        VALUES
+            (#{userCode}, #{totalAmount}, #{totalCount}, #{remainAmount}, #{remainCount}, #{type}, #{status}, #{expireTime}, #{version}, #{createdAt}, #{updatedAt})
+    </insert>
+
+
+    <select id="selectById" parameterType="long"
+            resultType="com.example.wisper_one.RedPacket.POJO.PO.RedPacketPO">
+        SELECT * FROM red_packet WHERE id = #{id}
+    </select>
+    <select id="selectExpiredPackets" resultType="com.example.wisper_one.RedPacket.POJO.PO.RedPacketPO">
+        SELECT * FROM red_packet
+        WHERE status = 1
+          AND expire_time &lt;= #{now,jdbcType=TIMESTAMP}
+    </select>
+    <update id="updateStatus">
+        UPDATE red_packet
+        SET status = #{status}, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+    <update id="updateWithVersion">
+        UPDATE red_packet
+        <set>
+            remain_count = #{remainCount},
+            remain_amount = #{remainAmount},
+            version = version + 1,
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id} AND version = #{version} AND remain_count > 0
+    </update>
+</mapper>

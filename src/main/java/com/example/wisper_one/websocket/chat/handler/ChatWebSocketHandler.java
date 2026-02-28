@@ -128,6 +128,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         String redisKey = "login:token:" + fromUserCode;
         Boolean exists = redisTemplate.hasKey(redisKey);
+
+
         if (!Boolean.TRUE.equals(exists)) {
 
             ObjectNode expireMsg = mapper.createObjectNode();
@@ -145,6 +147,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         }
 
         JsonNode json = mapper.readTree(message.getPayload());
+
         if (!json.has("to") || !json.has("msg")) {
             session.sendMessage(new TextMessage("消息格式错误"));
             return;
@@ -188,6 +191,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         // 通过 GlobalWsSessionManager 发送消息
         Set<WebSocketSession> targetSessions = GlobalWsSessionManager.getSessions(toUserCode);
+
         if (targetSessions != null && !targetSessions.isEmpty()) {
             ObjectNode resp = mapper.createObjectNode();
             resp.put("from", fromUserCode);

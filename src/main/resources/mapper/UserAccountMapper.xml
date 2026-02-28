@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wisper_one.useraccount.mapper.UserAccountMapper">
+
+    <select id="selectByUserCode" resultType="com.example.wisper_one.useraccount.PO.UserAccountPO">
+        SELECT * FROM user_account WHERE user_code = #{userCode}
+    </select>
+
+    <update id="updateBalanceWithVersion">
+        UPDATE user_account
+        <set>
+            balance = balance + #{amount},
+            version = version + 1,
+            updated_at = NOW()
+        </set>
+        WHERE user_code = #{userCode} AND version = #{version}
+    </update>
+
+    <insert id="insert" parameterType="com.example.wisper_one.useraccount.PO.UserAccountPO">
+        INSERT INTO user_account(user_code, balance, version, created_at, updated_at)
+        VALUES(#{userCode}, #{balance}, #{version}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <insert id="insertAccountRecord">
+        INSERT INTO account_record(user_code, change_amount, type, related_id, created_at)
+        VALUES(#{userCode}, #{changeAmount}, #{type}, #{relatedId}, #{createdAt})
+    </insert>
+
+</mapper>

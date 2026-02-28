@@ -8,14 +8,17 @@ import com.example.wisper_one.Login.POJO.UserPo;
 import com.example.wisper_one.Login.mapper.UserMapper;
 import com.example.wisper_one.Login.service.UserService;
 import com.example.wisper_one.Login.usercode.service.UserCodeService;
-import com.example.wisper_one.userUpdata.ImageController.ImageUploadController;
+import com.example.wisper_one.useraccount.PO.UserAccountPO;
+import com.example.wisper_one.useraccount.mapper.UserAccountMapper;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 /**
  * File: UserServicelmpl
@@ -34,7 +37,9 @@ public class UserServicelmpl implements UserService {
 
     @Autowired
     private UserCodeService userCodeService;
-
+    @Resource
+    private UserAccountMapper accountMapper;
+    @Transactional(rollbackFor = BusinessException.class)
     @Override
     public UserPo register(RegRequestDto regRequest) {
         if (userMapper.existsByUsername(regRequest.getUsername()) > 0) {
@@ -89,6 +94,30 @@ public class UserServicelmpl implements UserService {
                     if (file.exists()) file.delete();
                 }
                 throw new BusinessException("注册插入失败");
+            }
+            UserAccountPO accountPO = new UserAccountPO();
+            accountPO.setUserCode(user.getPublicId());  // 关联 users.public_id
+            accountPO.setBalance(BigDecimal.ZERO);      // 初始余额
+            accountPO.setVersion(0);                    // 乐观锁初始版本
+            accountPO.setCreatedAt(now);
+            accountPO.setUpdatedAt(now);
+
+            int accRows = accountMapper.insert(accountPO);
+            // 插入流水记录
+
+            if (accRows != 1) {
+                throw new BusinessException("账户初始化失败");
+            }
+
+            int accouint_record = accountMapper.insertAccountRecord(
+                    user.getPublicId(),        // 用户
+                    BigDecimal.ZERO,           // 变动金额
+                    "注册初始化",               // 类型
+                    null,                      // 无关联ID
+                    now                        // 创建时间
+            );
+            if (accouint_record != 1) {
+                throw new BusinessException("账户账户流水账单初始化失败");
             }
 
         } catch (Exception e) {
