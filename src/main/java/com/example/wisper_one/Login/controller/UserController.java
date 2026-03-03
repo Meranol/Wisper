@@ -80,7 +80,7 @@ public class UserController {
         data.put("username", user.getUsername());
         data.put("nickname", user.getNickname());
         data.put("avatarUrl", user.getAvatarUrl());
-
+        data.put("userCode",user.getPublicId());
 
         return Result.success("登录成功",data);
     }

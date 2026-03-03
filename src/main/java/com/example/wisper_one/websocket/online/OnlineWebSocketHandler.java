@@ -27,17 +27,42 @@ public class OnlineWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        String userCode = (String) session.getAttributes().get("userCode");
-        if (userCode != null) {
-            GlobalWsSessionManager.remove(userCode, session);
-            if (GlobalWsSessionManager.getSessions(userCode).isEmpty()) {
+//    @Override
+//    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+//        String userCode = (String) session.getAttributes().get("userCode");
+//        if (userCode != null) {
+//            GlobalWsSessionManager.remove(userCode, session);
+//            if (GlobalWsSessionManager.getSessions(userCode).isEmpty()) {
+//                broadcast("OFFLINE", userCode);
+//            }
+//        }
+//    }
+@Override
+public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    String userCode = (String) session.getAttributes().get("userCode");
+    if (userCode != null) {
+        // 移除 session
+        GlobalWsSessionManager.remove(userCode, session);
+
+        // 判断是否为 online WS
+        boolean isOnlineSession = session.getUri().toString().contains("/ws/online");
+
+        System.out.println("userCode: " + userCode);
+        System.out.println("关闭的会话 URI: " + session.getUri());
+        System.out.println("剩余会话列表: " + GlobalWsSessionManager.getSessions(userCode));
+        System.out.println("用户下线："+status);
+
+        if (isOnlineSession) {
+            // 检查是否还有其他 online WS
+            boolean hasOnlineSession = GlobalWsSessionManager.getSessions(userCode).stream()
+                    .anyMatch(s -> s.getUri().toString().contains("/ws/online"));
+
+            if (!hasOnlineSession) {
                 broadcast("OFFLINE", userCode);
             }
         }
     }
-
+}
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
     }
