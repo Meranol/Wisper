@@ -4,7 +4,10 @@
                 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.wisper_one.RedPacket.mapper.RedPacketMapper">
-    <insert id="insert">
+    <insert id="insert"
+            useGeneratedKeys="true"
+                keyProperty="id"
+    >
         INSERT INTO red_packet
         (user_code, total_amount, total_count, remain_amount, remain_count, type, status, expire_time, version, created_at, updated_at)
         VALUES

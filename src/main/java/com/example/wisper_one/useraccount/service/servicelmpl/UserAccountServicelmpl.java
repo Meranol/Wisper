@@ -8,6 +8,7 @@ import com.example.wisper_one.useraccount.mapper.UserAccountMapper;
 import com.example.wisper_one.useraccount.service.UserAccountService;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,8 @@ public class UserAccountServicelmpl implements UserAccountService {
 
     @Resource
     private UserAccountMapper userAccountMapper;
+
+
     @Resource
     private UserMapper userMapper;
     @Transactional(rollbackFor = Exception.class)

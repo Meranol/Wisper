@@ -5,7 +5,6 @@
 
 <mapper namespace="com.example.wisper_one.finduserlist.mapper.SelectUserFriendListMapper">
 
-    <!-- 好友列表返回字段映射 -->
     <resultMap id="FriendListResultMap" type="com.example.wisper_one.finduserlist.POJO.SelectUserFriendListDTO">
         <result property="friendCode" column="friend_code"/>
         <result property="nickname" column="nickname"/>

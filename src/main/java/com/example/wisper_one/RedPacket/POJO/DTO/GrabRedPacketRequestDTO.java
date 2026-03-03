@@ -11,5 +11,4 @@ import lombok.Data;
 @Data
 public class GrabRedPacketRequestDTO {
     private Long redPacketId;  // 要抢的红包ID
-    private String userCode;   // 抢红包的用户标识
 }

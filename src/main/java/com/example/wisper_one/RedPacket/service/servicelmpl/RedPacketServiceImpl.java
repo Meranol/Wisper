@@ -15,6 +15,7 @@ import com.example.wisper_one.useraccount.PO.UserAccountPO;
 import com.example.wisper_one.useraccount.mapper.UserAccountMapper;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,8 @@ public class RedPacketServiceImpl implements RedPacketService {
     private RedPacketRecordMapper recordMapper;
     @Resource
     private UserAccountMapper accountMapper;
+    @Resource
+    private StringRedisTemplate redisTemplatess;
 
     @Resource
     private UserMapper userMapper;
@@ -112,7 +115,6 @@ public class RedPacketServiceImpl implements RedPacketService {
             throw new BusinessException("拼手气红包每份最少0.01元");
         }
 
-        // ===== 2️⃣ 查询账户 =====
         UserAccountPO accountPO = accountMapper.selectByUserCode(userCode);
         if (accountPO == null) {
             throw new BusinessException("账户不存在");
@@ -147,8 +149,8 @@ public class RedPacketServiceImpl implements RedPacketService {
         po.setTotalCount(requestDTO.getTotalCount());
         po.setRemainCount(requestDTO.getTotalCount());
         po.setType(requestDTO.getType());
-        po.setStatus(1); // 进行中
-        po.setExpireTime(LocalDateTime.now().plusSeconds(10)); // 10秒后过期
+        po.setStatus(1);
+        po.setExpireTime(LocalDateTime.now().plusSeconds(10));
         po.setVersion(0);
         po.setCreatedAt(LocalDateTime.now());
         po.setUpdatedAt(LocalDateTime.now());
@@ -159,7 +161,18 @@ public class RedPacketServiceImpl implements RedPacketService {
             throw new BusinessException("发红包失败");
         }
 
-        // ===== 6️⃣ 返回结果 =====
+        long expireTimestamp = System.currentTimeMillis() + 10 * 1000;
+
+        redisTemplatess.opsForZSet().add(
+                "red_packet:delay",
+                po.getId().toString(),
+                expireTimestamp
+        );
+
+
+
+
+
         SendRedPacketResponseDTO response = new SendRedPacketResponseDTO();
         response.setSuccess(true);
         response.setRedPacketId(po.getId()); // 自增回填
