@@ -1,7 +1,7 @@
 package com.example.wisper_one.websocket.chat_group.service.servicempl;
 
-import com.example.wisper_one.Login.POJO.UserPo;
-import com.example.wisper_one.Login.mapper.UserMapper;
+import com.example.wisper_one.usercontroller.POJO.UserPo;
+import com.example.wisper_one.usercontroller.mapper.UserMapper;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import com.example.wisper_one.websocket.chat_group.POJO.ChatGroupEntity;
 import com.example.wisper_one.websocket.chat_group.POJO.ChatGroupMemberEntity;

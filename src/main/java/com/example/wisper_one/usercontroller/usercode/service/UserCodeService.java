@@ -1,7 +1,7 @@
-package com.example.wisper_one.Login.usercode.service;
+package com.example.wisper_one.usercontroller.usercode.service;
 
-import com.example.wisper_one.Login.usercode.mapper.UserCodeMapper;
-import com.example.wisper_one.Login.usercode.UserCodeSeq;
+import com.example.wisper_one.usercontroller.usercode.mapper.UserCodeMapper;
+import com.example.wisper_one.usercontroller.usercode.UserCodeSeq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

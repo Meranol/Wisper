@@ -1,4 +1,4 @@
-package com.example.wisper_one.Login.DTO;
+package com.example.wisper_one.usercontroller.DTO;
 
 import lombok.Data;
 

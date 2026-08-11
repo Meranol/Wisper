@@ -1,6 +1,6 @@
 package com.example.wisper_one.selectRequest.selectgrouprequest.service.servicempl;
 
-import com.example.wisper_one.Login.mapper.UserMapper;
+import com.example.wisper_one.usercontroller.mapper.UserMapper;
 import com.example.wisper_one.selectRequest.selectgrouprequest.DTO.SelectGroupRequestDTO;
 import com.example.wisper_one.selectRequest.selectgrouprequest.mapper.GroupRequestSelectMapper;
 import com.example.wisper_one.selectRequest.selectgrouprequest.service.GroupRequestSelectService;

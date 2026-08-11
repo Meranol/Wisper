@@ -1,6 +1,6 @@
 package com.example.wisper_one.useraccount.controller;
 
-import com.example.wisper_one.Login.common.Result;
+import com.example.wisper_one.usercontroller.common.Result;
 import com.example.wisper_one.useraccount.DO.UserAccountDO;
 import com.example.wisper_one.useraccount.DTO.RechargeRequestDTO;
 import com.example.wisper_one.useraccount.service.UserAccountService;

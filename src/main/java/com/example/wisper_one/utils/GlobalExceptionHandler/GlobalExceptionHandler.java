@@ -1,8 +1,7 @@
 package com.example.wisper_one.utils.GlobalExceptionHandler;
 
 
-import com.example.wisper_one.Login.common.Result;
-import com.example.wisper_one.Login.service.servicempl.UserServicelmpl;
+import com.example.wisper_one.usercontroller.common.Result;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import com.example.wisper_one.utils.ResultCode;
 import org.springframework.context.support.DefaultMessageSourceResolvable;

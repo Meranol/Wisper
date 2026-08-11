@@ -1,13 +1,13 @@
-package com.example.wisper_one.Login.controller;
+package com.example.wisper_one.usercontroller.controller;
 
-import com.example.wisper_one.Login.DTO.CheckUnameDto;
-import com.example.wisper_one.Login.DTO.LoginRequestDto;
-import com.example.wisper_one.Login.DTO.RegRequestDto;
-import com.example.wisper_one.Login.DTO.SelectuserDTO;
-import com.example.wisper_one.Login.common.Result;
-import com.example.wisper_one.Login.POJO.UserPo;
-import com.example.wisper_one.Login.mapper.UserMapper;
-import com.example.wisper_one.Login.service.UserService;
+import com.example.wisper_one.usercontroller.DTO.CheckUnameDto;
+import com.example.wisper_one.usercontroller.DTO.LoginRequestDto;
+import com.example.wisper_one.usercontroller.DTO.RegRequestDto;
+import com.example.wisper_one.usercontroller.DTO.SelectuserDTO;
+import com.example.wisper_one.usercontroller.common.Result;
+import com.example.wisper_one.usercontroller.POJO.UserPo;
+import com.example.wisper_one.usercontroller.mapper.UserMapper;
+import com.example.wisper_one.usercontroller.service.UserService;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import com.example.wisper_one.utils.jwt.JwtTokenUtil;
 import com.example.wisper_one.websocket.util.GlobalWsSessionManager;
@@ -38,6 +38,8 @@ public class UserController {
     private UserMapper userMapper;
     @Resource
     private RedisTemplate<String, String> redisTemplate;
+
+
     @PostMapping("/register")
     public Result<UserPo> register(@RequestBody RegRequestDto regRequest) {
         UserPo user = userService.register(regRequest);
@@ -59,10 +61,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Result<Map<String, Object>> login(@RequestBody LoginRequestDto loginRequest) {
+    public Result<Map<String, Object>> login(@RequestBody LoginRequestDto loginRequest,
+                                             @RequestParam(required = false, defaultValue = "web") String device
+    ) {
 
         UserPo user = userService.login(loginRequest);
         String redisKey = "login:token:" + user.getPublicId();
+        String token = JwtTokenUtil.generateToken(user.getUsername(), user.getPublicId(), 200000 * 960000000 * 6000000 * 1000000L);
 
         if (Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
             redisTemplate.delete(redisKey);
@@ -70,7 +75,6 @@ public class UserController {
             GlobalWsSessionManager.kick(user.getPublicId(), CloseStatus.NORMAL);
         }
 
-        String token = JwtTokenUtil.generateToken(user.getUsername(),user.getPublicId(), 200000 * 960000000 * 6000000 * 1000000L);
         redisTemplate.opsForValue().set(redisKey, token, Duration.ofHours(200000));
 
 

@@ -1,12 +1,9 @@
 package com.example.wisper_one.selectRequest.selectfriendrequest.Controller;
 
-import com.example.wisper_one.Login.common.Result;
-import com.example.wisper_one.finduserlist.POJO.SelectUserFriendListDTO;
+import com.example.wisper_one.usercontroller.common.Result;
 import com.example.wisper_one.selectRequest.selectfriendrequest.service.FriendRequestSelectService;
 import com.example.wisper_one.websocket.chat.friend.POJO.FriendRequestEntity;
-import com.example.wisper_one.websocket.chat.friend.service.FriendRequestService;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

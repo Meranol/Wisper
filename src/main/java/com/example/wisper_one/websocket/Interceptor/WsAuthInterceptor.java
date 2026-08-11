@@ -1,6 +1,6 @@
 package com.example.wisper_one.websocket.Interceptor;
 
-import com.example.wisper_one.Login.common.Result;
+import com.example.wisper_one.usercontroller.common.Result;
 import com.example.wisper_one.utils.ResultCode;
 import com.example.wisper_one.utils.jwt.JwtTokenUtil;
 import io.jsonwebtoken.Claims;

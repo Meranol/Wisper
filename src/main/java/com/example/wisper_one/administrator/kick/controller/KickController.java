@@ -1,6 +1,6 @@
 package com.example.wisper_one.administrator.kick.controller;
 
-import com.example.wisper_one.Login.common.Result;
+import com.example.wisper_one.usercontroller.common.Result;
 import com.example.wisper_one.administrator.kick.DTO.KickDTO;
 import com.example.wisper_one.administrator.kick.service.Kickservice;
 import org.springframework.web.bind.annotation.PostMapping;

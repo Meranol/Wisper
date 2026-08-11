@@ -1,4 +1,4 @@
-package com.example.wisper_one.Login.usercode;
+package com.example.wisper_one.usercontroller.usercode;
 
 import lombok.Data;
 /**

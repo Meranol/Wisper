@@ -1,6 +1,6 @@
 package com.example.wisper_one.websocket.showchatmessage.chatmessage.Controller;
 
-import com.example.wisper_one.Login.common.Result;
+import com.example.wisper_one.usercontroller.common.Result;
 import com.example.wisper_one.websocket.showchatmessage.chatmessage.POJO.ChatMessageSelectDto;
 import com.example.wisper_one.websocket.showchatmessage.chatmessage.Service.ChatMessageSelectService;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -3,9 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.wisper_one.Login.mapper.UserMapper">
+<mapper namespace="com.example.wisper_one.usercontroller.mapper.UserMapper">
 
-    <resultMap id="UserResultMap" type="com.example.wisper_one.Login.POJO.UserPo">
+    <resultMap id="UserResultMap" type="com.example.wisper_one.usercontroller.POJO.UserPo">
         <id property="id" column="id"/>
         <result property="publicId" column="public_id"/>
         <result property="username" column="username"/>
@@ -41,7 +41,7 @@
         SELECT vip FROM users WHERE public_id = #{Code}
     </select>
 
-    <select id="selectUserByPublicId" resultType="com.example.wisper_one.Login.POJO.UserPo">
+    <select id="selectUserByPublicId" resultType="com.example.wisper_one.usercontroller.POJO.UserPo">
         SELECT
             public_id,
             username,
@@ -53,12 +53,12 @@
         WHERE public_id = #{publicId}
     </select>
 
-    <insert id="insertUser" parameterType="com.example.wisper_one.Login.POJO.UserPo" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertUser" parameterType="com.example.wisper_one.usercontroller.POJO.UserPo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users(username, email, public_id, password_hash, salt, nickname,vip, status, created_at, updated_at)
         VALUES(#{username}, #{email}, #{publicId}, #{passwordHash}, #{salt}, #{nickname},#{vip}, #{status}, #{createdAt}, #{updatedAt})
     </insert>
 
-    <update id="updateUser" parameterType="com.example.wisper_one.Login.POJO.UserPo">
+    <update id="updateUser" parameterType="com.example.wisper_one.usercontroller.POJO.UserPo">
         UPDATE users
         SET last_login_at = #{lastLoginAt}, updated_at = #{updatedAt}
         WHERE id = #{id}

@@ -1,6 +1,6 @@
 package com.example.wisper_one.administrator.kick.service.servicempl;
 
-import com.example.wisper_one.Login.mapper.UserMapper;
+import com.example.wisper_one.usercontroller.mapper.UserMapper;
 import com.example.wisper_one.administrator.kick.DTO.KickDTO;
 import com.example.wisper_one.administrator.kick.service.Kickservice;
 import com.example.wisper_one.utils.Exception.BusinessException;

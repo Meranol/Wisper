@@ -1,7 +1,6 @@
 package com.example.wisper_one.websocket.chat.handler;
 
-import com.example.wisper_one.Login.mapper.UserMapper;
-import com.example.wisper_one.utils.Exception.BusinessException;
+import com.example.wisper_one.usercontroller.mapper.UserMapper;
 import com.example.wisper_one.websocket.chat.POJO.ChatMessageEntity;
 import com.example.wisper_one.websocket.chat.mapper.ChatMessageMapper;
 import com.example.wisper_one.websocket.util.GlobalWsSessionManager;

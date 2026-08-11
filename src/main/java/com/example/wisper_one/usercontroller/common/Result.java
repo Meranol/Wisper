@@ -1,4 +1,4 @@
-package com.example.wisper_one.Login.common;
+package com.example.wisper_one.usercontroller.common;
 
 import com.example.wisper_one.utils.ResultCode;
 

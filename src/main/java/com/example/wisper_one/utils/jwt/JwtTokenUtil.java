@@ -1,6 +1,6 @@
 package com.example.wisper_one.utils.jwt;
 
-import com.example.wisper_one.Login.common.Result;
+import com.example.wisper_one.usercontroller.common.Result;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 

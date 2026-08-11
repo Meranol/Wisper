@@ -1,6 +1,6 @@
 package com.example.wisper_one.finduserlist.service.servicempl;
 
-import com.example.wisper_one.Login.mapper.UserMapper;
+import com.example.wisper_one.usercontroller.mapper.UserMapper;
 import com.example.wisper_one.finduserlist.POJO.SelectUserFriendListDTO;
 import com.example.wisper_one.finduserlist.mapper.SelectUserFriendListMapper;
 import com.example.wisper_one.finduserlist.service.SelectUserFriendListservice;

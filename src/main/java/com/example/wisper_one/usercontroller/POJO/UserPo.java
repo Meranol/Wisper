@@ -1,4 +1,4 @@
-package com.example.wisper_one.Login.POJO;
+package com.example.wisper_one.usercontroller.POJO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;

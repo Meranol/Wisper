@@ -1,6 +1,6 @@
 package com.example.wisper_one.websocket.showchatmessage.chatmessage.Service.Servicempl;
 
-import com.example.wisper_one.Login.mapper.UserMapper;
+import com.example.wisper_one.usercontroller.mapper.UserMapper;
 import com.example.wisper_one.websocket.showchatmessage.chatmessage.Mapper.ChatMessageSelectMapper;
 import com.example.wisper_one.websocket.showchatmessage.chatmessage.POJO.ChatMessageSelectDto;
 import com.example.wisper_one.websocket.showchatmessage.chatmessage.Service.ChatMessageSelectService;

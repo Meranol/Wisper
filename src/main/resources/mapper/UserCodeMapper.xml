@@ -3,11 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- 修改这里的 namespace 为正确的 Mapper 接口路径 -->
-<mapper namespace="com.example.wisper_one.Login.usercode.mapper.UserCodeMapper">
+<mapper namespace="com.example.wisper_one.usercontroller.usercode.mapper.UserCodeMapper">
 
-    <resultMap id="UserCodeSeqResultMap" type="com.example.wisper_one.Login.usercode.UserCodeSeq">
-        <id property="id" column="id"/>
+    <resultMap id="UserCodeSeqResultMap" type="com.example.wisper_one.usercontroller.usercode.UserCodeSeq">
         <result property="year" column="year"/>
         <result property="lastSerial" column="last_serial"/>
     </resultMap>
@@ -16,12 +14,12 @@
         SELECT * FROM user_code_seq WHERE year = #{year}
     </select>
 
-    <insert id="insert" parameterType="com.example.wisper_one.Login.usercode.UserCodeSeq">
+    <insert id="insert" parameterType="com.example.wisper_one.usercontroller.usercode.UserCodeSeq">
         INSERT INTO user_code_seq (year, last_serial)
         VALUES (#{year}, #{lastSerial})
     </insert>
 
-    <update id="update" parameterType="com.example.wisper_one.Login.usercode.UserCodeSeq">
+    <update id="update" parameterType="com.example.wisper_one.usercontroller.usercode.UserCodeSeq">
         UPDATE user_code_seq
         SET last_serial = #{lastSerial}
         WHERE year = #{year}

@@ -1,6 +1,6 @@
-package com.example.wisper_one.Login.mapper;
+package com.example.wisper_one.usercontroller.mapper;
 
-import com.example.wisper_one.Login.POJO.UserPo;
+import com.example.wisper_one.usercontroller.POJO.UserPo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 /**

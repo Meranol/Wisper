@@ -1,6 +1,6 @@
-package com.example.wisper_one.Login.usercode.mapper;
+package com.example.wisper_one.usercontroller.usercode.mapper;
 
-import com.example.wisper_one.Login.usercode.UserCodeSeq;
+import com.example.wisper_one.usercontroller.usercode.UserCodeSeq;
 
 
 import org.apache.ibatis.annotations.Mapper;

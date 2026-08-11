@@ -1,8 +1,7 @@
 package com.example.wisper_one.websocket.chat.friend.service.servicelmpl;
 
-import com.example.wisper_one.Login.mapper.UserMapper;
+import com.example.wisper_one.usercontroller.mapper.UserMapper;
 import com.example.wisper_one.utils.Exception.BusinessException;
-import com.example.wisper_one.utils.jwt.JwtTokenUtil;
 import com.example.wisper_one.websocket.chat.friend.POJO.FriendRequestEntity;
 import com.example.wisper_one.websocket.chat.friend.mapper.FriendRequestMapper;
 import com.example.wisper_one.websocket.chat.friend.service.FriendRequestService;

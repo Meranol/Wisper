@@ -1,6 +1,6 @@
 package com.example.wisper_one.websocket.chat_group.Controller;
 
-import com.example.wisper_one.Login.common.Result;
+import com.example.wisper_one.usercontroller.common.Result;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import com.example.wisper_one.websocket.chat_group.POJO.ChatGroupEntity;
 import com.example.wisper_one.websocket.chat_group.POJO.ChatGroupMemberEntity;

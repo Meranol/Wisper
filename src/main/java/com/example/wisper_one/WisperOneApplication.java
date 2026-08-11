@@ -7,8 +7,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 
 @SpringBootApplication
-@MapperScan({"com.example.wisper_one.Login.mapper",
-        "com.example.wisper_one.Login.usercode.mapper",
+@MapperScan({"com.example.wisper_one.usercontroller.mapper",
+        "com.example.wisper_one.usercontroller.usercode.mapper",
         "com.example.wisper_one.websocket.chat.mapper",
         "com.example.wisper_one.websocket.chat_group.mapper",
         "com.example.wisper_one.websocket.chat.friend.mapper",

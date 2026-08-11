@@ -1,10 +1,8 @@
 package com.example.wisper_one.RedPacket.controller;
 
-import com.example.wisper_one.Login.common.Result;
+import com.example.wisper_one.usercontroller.common.Result;
 import com.example.wisper_one.RedPacket.POJO.DTO.GrabRedPacketRequestDTO;
-import com.example.wisper_one.RedPacket.POJO.DTO.GrabRedPacketResponseDTO;
 import com.example.wisper_one.RedPacket.POJO.DTO.SendRedPacketRequestDTO;
-import com.example.wisper_one.RedPacket.POJO.DTO.SendRedPacketResponseDTO;
 import com.example.wisper_one.RedPacket.service.RedPacketService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

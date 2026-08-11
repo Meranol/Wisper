@@ -1,6 +1,6 @@
 package com.example.wisper_one.RedPacket.service.servicelmpl;
 
-import com.example.wisper_one.Login.mapper.UserMapper;
+import com.example.wisper_one.usercontroller.mapper.UserMapper;
 import com.example.wisper_one.RedPacket.POJO.DO.RedPacketDO;
 import com.example.wisper_one.RedPacket.POJO.DTO.GrabRedPacketRequestDTO;
 import com.example.wisper_one.RedPacket.POJO.DTO.GrabRedPacketResponseDTO;

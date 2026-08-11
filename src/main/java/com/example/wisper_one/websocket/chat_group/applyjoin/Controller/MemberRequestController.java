@@ -1,6 +1,6 @@
 package com.example.wisper_one.websocket.chat_group.applyjoin.Controller;
 
-import com.example.wisper_one.Login.common.Result;
+import com.example.wisper_one.usercontroller.common.Result;
 import com.example.wisper_one.websocket.chat_group.applyjoin.POJO.MemberRequestEntity;
 import com.example.wisper_one.websocket.chat_group.applyjoin.service.MemberRequestService;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -32,6 +32,7 @@ public class OnlineWebSocketHandler extends TextWebSocketHandler {
         String userCode = (String) session.getAttributes().get("userCode");
         if (userCode != null) {
             GlobalWsSessionManager.remove(userCode, session);
+
                 broadcast("OFFLINE", userCode);
 
         }

@@ -1,7 +1,6 @@
 package com.example.wisper_one.websocket.chat.friend.Controller;
 
-import com.example.wisper_one.Login.common.Result;
-import com.example.wisper_one.websocket.chat.friend.POJO.FriendProcessDTO;
+import com.example.wisper_one.usercontroller.common.Result;
 import com.example.wisper_one.websocket.chat.friend.POJO.FriendProcessDTO;
 import com.example.wisper_one.websocket.chat.friend.service.FriendProcessService;
 import org.springframework.web.bind.annotation.PostMapping;

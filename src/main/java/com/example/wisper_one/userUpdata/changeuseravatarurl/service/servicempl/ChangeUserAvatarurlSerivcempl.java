@@ -1,6 +1,6 @@
 package com.example.wisper_one.userUpdata.changeuseravatarurl.service.servicempl;
 
-import com.example.wisper_one.Login.mapper.UserMapper;
+import com.example.wisper_one.usercontroller.mapper.UserMapper;
 import com.example.wisper_one.userUpdata.changeuseravatarurl.DTO.ChangeUserAvatarurlDto;
 import com.example.wisper_one.userUpdata.changeuseravatarurl.mapper.ChangeUserAvatarurlMapper;
 import com.example.wisper_one.userUpdata.changeuseravatarurl.service.ChangeUserAvatarurlSerivce;
