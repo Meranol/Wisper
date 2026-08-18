@@ -3,6 +3,7 @@ package com.example.wisper_one.websocket.chat.friend.service.servicelmpl;
 import com.example.wisper_one.usercontroller.mapper.UserMapper;
 import com.example.wisper_one.utils.Exception.BusinessException;
 import com.example.wisper_one.websocket.chat.friend.POJO.FriendRequestEntity;
+import com.example.wisper_one.websocket.chat.friend.mapper.FriendRelationMapper;
 import com.example.wisper_one.websocket.chat.friend.mapper.FriendRequestMapper;
 import com.example.wisper_one.websocket.chat.friend.service.FriendRequestService;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,8 @@ public class FriendRequestServicempl implements FriendRequestService {
     FriendRequestMapper friendRequestMapper;
     @Resource
     UserMapper userMapper;
+    @Resource
+    private FriendRelationMapper friendRelationMapper;
 
     @Override
     public FriendRequestEntity createFriendRequest(FriendRequestEntity friendRequest) {
@@ -59,14 +62,23 @@ public class FriendRequestServicempl implements FriendRequestService {
         friendRequest.setStatus(0);
         friendRequest.setCreateTime(LocalDateTime.now());
 
-        System.out.println("好友重复申请✅️"+friendRequest.getFromUserCode()+friendRequest.getToUserCode());
+        System.out.println("好友重复申请"+friendRequest.getFromUserCode()+friendRequest.getToUserCode());
         FriendRequestEntity existingRequest = friendRequestMapper.selectExistingRequest(friendRequest.getFromUserCode(), friendRequest.getToUserCode());
         if (existingRequest != null ) {
             throw new BusinessException("已经存在未处理的好友申请");
         }
-        FriendRequestEntity Request = friendRequestMapper.selectRequest(friendRequest.getFromUserCode(), friendRequest.getToUserCode());
-        if (Request != null ) {
-            throw new BusinessException("好友申请已通过");
+        // 判断当前是否已是好友（以 friend_relation 的 status 为准，而不是历史申请记录，否则删除后重新申请会被旧记录误拦）
+        Integer relationStatus = friendRelationMapper.selectFriendStatus(friendRequest.getFromUserCode(), friendRequest.getToUserCode());
+        if (relationStatus != null && relationStatus == 1) {
+            throw new BusinessException("你们已经是好友");
+        }
+
+        // 同方向已有申请记录（uk_request 唯一键 from_user_code+to_user_code）→ 复用重置为待处理，避免唯一键冲突
+        FriendRequestEntity existed = friendRequestMapper.selectRequest(friendRequest.getFromUserCode(), friendRequest.getToUserCode());
+        if (existed != null) {
+            friendRequest.setHandleTime(null);
+            friendRequestMapper.updateFriendRequest(friendRequest);
+            return friendRequest;
         }
 
         int row = friendRequestMapper.insertFriendRequest(friendRequest);
@@ -76,4 +88,6 @@ public class FriendRequestServicempl implements FriendRequestService {
 
         return friendRequest;
     }
+
+
 }

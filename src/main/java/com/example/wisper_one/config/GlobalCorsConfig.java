@@ -20,7 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class GlobalCorsConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http  .cors(cors -> {})   // 🔥 这一行必须加
+        http  .cors(cors -> {})
 
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth  .anyRequest().permitAll())

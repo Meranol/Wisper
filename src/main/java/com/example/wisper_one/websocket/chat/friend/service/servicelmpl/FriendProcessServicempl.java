@@ -73,18 +73,23 @@ public class FriendProcessServicempl implements FriendProcessService {
         FriendRelationEntity friendRelationEntity = new FriendRelationEntity();
         //建立好友
         if (dto.getStatus() == 1) {
-            friendRelationEntity.setUserCode(currentUserCode);
-            friendRelationEntity.setFriendCode(dto.getFromUserCode());
+            // 若之前删除过（存在 status=3 的旧关系行），复用该行恢复为正常，避免产生重复记录
+            FriendRelationEntity existing =
+                    friendRelationMapper.selectRelation(currentUserCode, dto.getFromUserCode());
 
-            friendRelationEntity.setStatus(1);
-            friendRelationEntity.setCreateTime(LocalDateTime.now());
+            if (existing != null) {
+                friendRelationMapper.updateFriendStatus(currentUserCode, dto.getFromUserCode(), 1, null);
+            } else {
+                friendRelationEntity.setUserCode(currentUserCode);
+                friendRelationEntity.setFriendCode(dto.getFromUserCode());
 
+                friendRelationEntity.setStatus(1);
+                friendRelationEntity.setCreateTime(LocalDateTime.now());
 
-            friendRelationMapper.insertFriendRequest(
-                    friendRelationEntity
-            );
-
-
+                friendRelationMapper.insertFriendRequest(
+                        friendRelationEntity
+                );
+            }
         }
         return dto;
     }

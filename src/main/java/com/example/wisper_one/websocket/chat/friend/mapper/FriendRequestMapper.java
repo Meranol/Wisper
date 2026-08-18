@@ -18,6 +18,8 @@ public interface FriendRequestMapper {
 
     int updateStatus(FriendRequestEntity entity);
 
+    int updateFriendRequest(FriendRequestEntity entity);
+
     FriendRequestEntity selectExistingRequest(@Param("fromUserCode") String fromUserCode,@Param("toUserCode") String toUserCode);
 
 

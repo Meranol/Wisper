@@ -1,0 +1,1168 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Wisper_one 接口文档",
+    "description": "Wisper_one 即时通讯后端接口文档。\n\n## 基本信息\n- 基础地址: http://localhost:8089\n- 统一响应结构: `{ \"code\": 200, \"msg\": \"success\", \"data\": ... }`\n- 认证方式: JWT，请求头 `Authorization: Bearer <token>`\n\n## 鉴权说明\n- 公开接口（无需 token）: `/user/login`、`/user/register`、`/user/checkusername`、`/api/upload/image?type=temp`\n- 其余 HTTP 接口均需在请求头携带 `Authorization: Bearer <token>`（登录接口返回的 token）\n\n## WebSocket 接口（Apifox 中单独以 WebSocket 方式调试）\n- 单聊: `ws://localhost:8089/ws/chat`\n- 群聊: `ws://localhost:8089/ws/group`\n- 在线状态: `ws://localhost:8089/ws/online`\n- 握手鉴权: 在 URL 后拼接 `?token=<token>`，或请求头携带 `Authorization: Bearer <token>`\n\n",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8089",
+      "description": "本地开发环境"
+    }
+  ],
+  "tags": [
+    { "name": "用户模块", "description": "注册、登录、登出、用户信息查询" },
+    { "name": "用户账户", "description": "账户余额、充值" },
+    { "name": "红包", "description": "发红包、抢红包" },
+    { "name": "好友", "description": "好友申请、处理、列表查询" },
+    { "name": "群聊", "description": "创建群、加入群、入群申请、处理申请" },
+    { "name": "聊天记录", "description": "单聊/群聊历史消息查询" },
+    { "name": "文件上传", "description": "图片上传、头像修改" },
+    { "name": "管理员", "description": "踢人下线" }
+  ],
+  "paths": {
+    "/user/register": {
+      "post": {
+        "tags": ["用户模块"],
+        "summary": "用户注册",
+        "description": "注册新用户。用户名 3-20 位（字母/数字/下划线/中文），密码 6-50 位且必须包含字母和数字，邮箱需合法格式。",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegRequestDto" },
+              "example": {
+                "username": "testuser",
+                "email": "test@example.com",
+                "password": "abc123456",
+                "avatarUrl": "/uploads/user/xxx.png"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "注册成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "注册成功",
+                  "data": {
+                    "id": 1,
+                    "username": "testuser",
+                    "publicId": "USERCODE123"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": ["用户模块"],
+        "summary": "用户登录",
+        "description": "登录成功返回 token、userId、username、nickname、avatarUrl、userCode。token 需放入后续请求头 `Authorization: Bearer <token>`。",
+        "security": [],
+        "parameters": [
+          {
+            "name": "device",
+            "in": "query",
+            "required": false,
+            "description": "登录设备标识，默认 web",
+            "schema": { "type": "string", "default": "web" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequestDto" },
+              "example": {
+                "username": "testuser",
+                "password": "abc123456"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "登录成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "登录成功",
+                  "data": {
+                    "token": "eyJhbGciOiJIUzI1NiJ9...",
+                    "userId": 1,
+                    "username": "testuser",
+                    "nickname": "测试用户",
+                    "avatarUrl": "/uploads/user/xxx.png",
+                    "userCode": "USERCODE123"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/logout": {
+      "post": {
+        "tags": ["用户模块"],
+        "summary": "用户登出",
+        "description": "清除登录态并踢下线当前用户。",
+        "responses": {
+          "200": {
+            "description": "登出成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": { "code": 200, "msg": "登出成功", "data": null }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/info": {
+      "post": {
+        "tags": ["用户模块"],
+        "summary": "查询个人用户信息",
+        "description": "根据 publicId 查询用户信息。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SelectuserDTO" },
+              "example": { "publicId": "USERCODE123" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "查询成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "查询成功",
+                  "data": {
+                    "id": 1,
+                    "username": "testuser",
+                    "nickname": "测试用户",
+                    "avatarUrl": "/uploads/user/xxx.png",
+                    "publicId": "USERCODE123",
+                    "email": "test@example.com",
+                    "vip": 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/checkusername": {
+      "get": {
+        "tags": ["用户模块"],
+        "summary": "检查用户名是否可用",
+        "security": [],
+        "parameters": [
+          {
+            "name": "uname",
+            "in": "query",
+            "required": true,
+            "description": "要检查的用户名",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "检查结果",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": { "code": 200, "msg": "用户名可用", "data": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/profile": {
+      "get": {
+        "tags": ["用户模块"],
+        "summary": "获取当前登录用户",
+        "description": "从 SpringSecurity 上下文获取当前登录用户名。",
+        "responses": {
+          "200": {
+            "description": "当前用户",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": { "code": 200, "msg": "当前用户", "data": "testuser" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/token": {
+      "post": {
+        "tags": ["用户模块"],
+        "summary": "校验 token",
+        "description": "测试用，校验请求头中的 token 是否有效。",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer <token>",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "校验结果",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "测试完成",
+                  "data": {
+                    "verifyResult": { "code": 200, "msg": "success", "data": "testuser" },
+                    "token": "eyJhbGciOiJIUzI1NiJ9..."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/account/add": {
+      "post": {
+        "tags": ["用户账户"],
+        "summary": "添加用户账户",
+        "description": "创建用户账户（当前为占位实现，直接返回成功）。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserAccountDO" },
+              "example": {
+                "id": null,
+                "userCode": "USERCODE123",
+                "balance": 0,
+                "version": 0
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "添加成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": { "code": 200, "msg": "success", "data": null }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/account/recharge": {
+      "post": {
+        "tags": ["用户账户"],
+        "summary": "账户充值",
+        "description": "给当前登录用户账户充值，金额必须大于 0。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RechargeRequestDTO" },
+              "example": { "amount": 100.00, "remark": "充值" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "充值结果",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": { "id": 1, "userCode": "USERCODE123", "balance": 100.00, "version": 1 }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/redpacket/send": {
+      "post": {
+        "tags": ["红包"],
+        "summary": "发红包",
+        "description": "发送红包。type=1 普通红包，type=2 拼手气红包。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SendRedPacketRequestDTO" },
+              "example": {
+                "totalAmount": 10.00,
+                "totalCount": 5,
+                "type": 2,
+                "expireTime": "2026-08-13T12:00:00"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "发送结果",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": { "code": 200, "msg": "success", "data": { "redPacketId": 1 } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/redpacket/grab": {
+      "post": {
+        "tags": ["红包"],
+        "summary": "抢红包",
+        "description": "根据红包 ID 抢红包。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GrabRedPacketRequestDTO" },
+              "example": { "redPacketId": 1 }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "抢红包结果",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": { "amount": 2.50, "redPacketId": 1 }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/FriendRequest/send": {
+      "post": {
+        "tags": ["好友"],
+        "summary": "发送好友申请",
+        "description": "发起好友申请。status 初始为 0（待处理）。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FriendRequestEntity" },
+              "example": {
+                "fromUserCode": "USERCODE_A",
+                "toUserCode": "USERCODE_B",
+                "status": 0,
+                "remark": "我是xxx，加个好友"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "申请结果",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": {
+                    "id": 1,
+                    "fromUserCode": "USERCODE_A",
+                    "toUserCode": "USERCODE_B",
+                    "status": 0,
+                    "remark": "我是xxx，加个好友"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/friend/request/process": {
+      "post": {
+        "tags": ["好友"],
+        "summary": "处理好友申请",
+        "description": "处理好友申请。status=1 同意，status=2 拒绝。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FriendProcessDTO" },
+              "example": { "fromUserCode": "USERCODE_A", "status": 1 }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "处理结果",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": { "code": 200, "msg": "success", "data": null }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/friend/selectlist/list": {
+      "post": {
+        "tags": ["好友"],
+        "summary": "查询好友申请列表",
+        "description": "查询当前用户收到的好友申请列表。",
+        "responses": {
+          "200": {
+            "description": "好友申请列表",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": [
+                    {
+                      "id": 1,
+                      "fromUserCode": "USERCODE_A",
+                      "toUserCode": "USERCODE_B",
+                      "status": 0,
+                      "remark": "我是xxx，加个好友"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/selectfriendlist/selectfriend": {
+      "post": {
+        "tags": ["好友"],
+        "summary": "查询好友列表",
+        "description": "查询当前用户的好友列表。",
+        "responses": {
+          "200": {
+            "description": "好友列表",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": [
+                    { "userCode": "USERCODE_B", "nickname": "好友1", "avatarUrl": "/uploads/user/y.png" }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chatgroup/creategroup": {
+      "post": {
+        "tags": ["群聊"],
+        "summary": "创建群聊",
+        "description": "创建群聊，群名称不能为空。返回 ResponseEntity（非 Result 包装）。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "name": { "type": "string", "description": "群名称" } }
+              },
+              "example": { "name": "我的群" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "创建成功（直接返回群实体）",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "name": "我的群",
+                  "groupCode": "GROUPCODE123"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/join/joingroup": {
+      "post": {
+        "tags": ["群聊"],
+        "summary": "加入群聊",
+        "description": "根据群号加入群聊。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "groupCode": { "type": "string", "description": "群号" } }
+              },
+              "example": { "groupCode": "GROUPCODE123" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "加入结果",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": { "groupCode": "GROUPCODE123", "userCode": "USERCODE_A" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/groupapply/Requestgroup": {
+      "post": {
+        "tags": ["群聊"],
+        "summary": "申请加入群",
+        "description": "向群聊发起入群申请。status 初始为 0（待处理）。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MemberRequestEntity" },
+              "example": {
+                "fromUserCode": "USERCODE_A",
+                "toGroup": "GROUPCODE123",
+                "status": 0,
+                "remark": "申请入群"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "申请结果",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": {
+                    "id": 1,
+                    "fromUserCode": "USERCODE_A",
+                    "toGroup": "GROUPCODE123",
+                    "status": 0,
+                    "remark": "申请入群"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/groupmemberhandler/Request": {
+      "post": {
+        "tags": ["群聊"],
+        "summary": "处理入群申请",
+        "description": "处理入群申请。status=1 同意，status=2 拒绝。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MemberRequestHandlerDTO" },
+              "example": { "id": 1, "status": 1 }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "处理结果",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": { "id": 1, "status": 1 }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/GroupRequestSelect/list": {
+      "post": {
+        "tags": ["群聊"],
+        "summary": "查询入群申请列表",
+        "description": "查询当前用户的入群申请列表。",
+        "responses": {
+          "200": {
+            "description": "入群申请列表",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": [
+                    {
+                      "id": 1,
+                      "fromUserCode": "USERCODE_A",
+                      "toGroup": "GROUPCODE123",
+                      "status": 0,
+                      "remark": "申请入群"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/selectchatmessage/chatmessagelist": {
+      "post": {
+        "tags": ["聊天记录"],
+        "summary": "查询单聊历史消息",
+        "description": "分页查询单聊历史消息。lastId 用于游标分页（传 0 表示第一页）。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ChatMessageSelectDto" },
+              "example": {
+                "sender": "USERCODE_A",
+                "friendCode": "USERCODE_B",
+                "lastId": 0,
+                "pageSize": 20
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "消息列表",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": [
+                    {
+                      "id": 1,
+                      "sender": "USERCODE_A",
+                      "friendCode": "USERCODE_B",
+                      "content": "你好",
+                      "type": "text"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/groupchatmessage/list": {
+      "post": {
+        "tags": ["聊天记录"],
+        "summary": "查询群聊历史消息",
+        "description": "分页查询群聊历史消息。lastId 用于游标分页（传 0 表示第一页）。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GroupChatMessageSelectDto" },
+              "example": {
+                "groupCode": "GROUPCODE123",
+                "userCode": "USERCODE_A",
+                "lastId": 0,
+                "pageSize": 20
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "消息列表",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": [
+                    {
+                      "id": 1,
+                      "groupCode": "GROUPCODE123",
+                      "userCode": "USERCODE_A",
+                      "message": "大家好"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/upload/image": {
+      "post": {
+        "tags": ["文件上传"],
+        "summary": "上传图片",
+        "description": "上传图片，支持 png/jpg/jpeg。type 取值：user（头像）、group（群头像）、chat（聊天图片）、temp（临时）。type=temp 无需 token。返回可直接访问的 URL。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["file", "type"],
+                "properties": {
+                  "file": { "type": "string", "format": "binary", "description": "图片文件" },
+                  "type": {
+                    "type": "string",
+                    "enum": ["user", "group", "chat", "temp"],
+                    "description": "上传类型"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "上传结果",
+            "content": {
+              "application/json": {
+                "example": { "url": "/uploads/user/3f2a1b9c...png" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/changeuseravatarurl/changeavatarurl": {
+      "post": {
+        "tags": ["文件上传"],
+        "summary": "修改用户头像",
+        "description": "根据 public_id 修改用户头像 URL。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ChangeUserAvatarurlDto" },
+              "example": {
+                "public_id": "USERCODE_A",
+                "avatarUrl": "/uploads/user/3f2a1b9c...png"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "修改结果",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": {
+                    "public_id": "USERCODE_A",
+                    "avatarUrl": "/uploads/user/3f2a1b9c...png"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/kick": {
+      "post": {
+        "tags": ["管理员"],
+        "summary": "踢人下线",
+        "description": "将指定 public_id 的用户强制下线。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/KickDTO" },
+              "example": { "public_id": "USERCODE_A" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "踢人结果",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "用户已被踢出",
+                  "data": { "public_id": "USERCODE_A", "success": true }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/friend/block": {
+      "post": {
+        "tags": ["好友"],
+        "summary": "拉黑好友",
+        "description": "将好友关系状态置为 2（拉黑），并记录 operator_code 为当前用户。拉黑后双方无法聊天。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FriendActionDTO" },
+              "example": { "friendCode": "USERCODE_B" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "拉黑成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": { "code": 200, "msg": "success", "data": null }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/friend/unblock": {
+      "post": {
+        "tags": ["好友"],
+        "summary": "解除拉黑",
+        "description": "仅拉黑方（operator_code==自己）可解除，将状态恢复为 1。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FriendActionDTO" },
+              "example": { "friendCode": "USERCODE_B" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "解除成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": { "code": 200, "msg": "success", "data": null }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/friend/delete": {
+      "post": {
+        "tags": ["好友"],
+        "summary": "删除好友",
+        "description": "将好友关系状态置为 3（已删除），双方解除关系，需重新发起好友申请才能恢复。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FriendActionDTO" },
+              "example": { "friendCode": "USERCODE_B" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "删除成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": { "code": 200, "msg": "success", "data": null }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/friend/relation": {
+      "post": {
+        "tags": ["好友"],
+        "summary": "查询好友关系",
+        "description": "查询当前用户与指定好友的关系，返回 status 与 operatorCode，用于区分「你拉黑了TA / TA拉黑了你」。",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FriendActionDTO" },
+              "example": { "friendCode": "USERCODE_B" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "关系信息",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Result" },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": {
+                    "id": 1,
+                    "userCode": "USERCODE_A",
+                    "friendCode": "USERCODE_B",
+                    "status": 2,
+                    "operatorCode": "USERCODE_A",
+                    "createTime": "2026-08-18T10:00:00"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "登录接口返回的 token"
+      }
+    },
+    "schemas": {
+      "Result": {
+        "type": "object",
+        "description": "统一响应结构",
+        "properties": {
+          "code": { "type": "integer", "description": "状态码，200 表示成功" },
+          "msg": { "type": "string", "description": "提示信息" },
+          "data": { "description": "业务数据" }
+        }
+      },
+      "RegRequestDto": {
+        "type": "object",
+        "required": ["username", "password"],
+        "properties": {
+          "username": { "type": "string", "description": "用户名，3-20 位" },
+          "email": { "type": "string", "description": "邮箱" },
+          "password": { "type": "string", "description": "密码，6-50 位，需包含字母和数字" },
+          "avatarUrl": { "type": "string", "description": "头像 URL" }
+        }
+      },
+      "LoginRequestDto": {
+        "type": "object",
+        "required": ["username", "password"],
+        "properties": {
+          "username": { "type": "string" },
+          "password": { "type": "string" }
+        }
+      },
+      "SelectuserDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "username": { "type": "string" },
+          "nickname": { "type": "string" },
+          "avatarUrl": { "type": "string" },
+          "publicId": { "type": "string" },
+          "email": { "type": "string" },
+          "vip": { "type": "integer" }
+        }
+      },
+      "UserAccountDO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "userCode": { "type": "string" },
+          "balance": { "type": "number", "format": "double" },
+          "version": { "type": "integer" }
+        }
+      },
+      "RechargeRequestDTO": {
+        "type": "object",
+        "required": ["amount"],
+        "properties": {
+          "amount": { "type": "number", "format": "double", "description": "充值金额，必须大于 0" },
+          "remark": { "type": "string", "description": "充值备注" }
+        }
+      },
+      "SendRedPacketRequestDTO": {
+        "type": "object",
+        "properties": {
+          "totalAmount": { "type": "number", "format": "double", "description": "红包总金额" },
+          "totalCount": { "type": "integer", "description": "红包总数量" },
+          "type": { "type": "integer", "description": "1=普通红包, 2=拼手气红包" },
+          "expireTime": { "type": "string", "format": "date-time", "description": "过期时间" }
+        }
+      },
+      "GrabRedPacketRequestDTO": {
+        "type": "object",
+        "properties": {
+          "redPacketId": { "type": "integer", "format": "int64", "description": "要抢的红包 ID" }
+        }
+      },
+      "FriendRequestEntity": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "fromUserCode": { "type": "string", "description": "申请人" },
+          "toUserCode": { "type": "string", "description": "被申请人" },
+          "status": { "type": "integer", "description": "0=待处理, 1=同意, 2=拒绝" },
+          "createTime": { "type": "string", "format": "date-time" },
+          "remark": { "type": "string", "description": "申请理由" },
+          "handleTime": { "type": "string", "format": "date-time" }
+        }
+      },
+      "FriendProcessDTO": {
+        "type": "object",
+        "properties": {
+          "fromUserCode": { "type": "string", "description": "申请人用户编码" },
+          "status": { "type": "integer", "description": "1=同意, 2=拒绝" }
+        }
+      },
+      "MemberRequestEntity": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "fromUserCode": { "type": "string", "description": "申请人" },
+          "toGroup": { "type": "string", "description": "目标群聊群号" },
+          "status": { "type": "integer", "description": "0=待处理, 1=同意, 2=拒绝" },
+          "createTime": { "type": "string", "format": "date-time" },
+          "remark": { "type": "string", "description": "申请理由" },
+          "handlername": { "type": "string", "description": "处理人" },
+          "handleTime": { "type": "string", "format": "date-time" }
+        }
+      },
+      "MemberRequestHandlerDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64", "description": "申请 ID" },
+          "status": { "type": "integer", "description": "1=同意, 2=拒绝" },
+          "handlername": { "type": "string", "description": "处理人（后端填）" },
+          "handleTime": { "type": "string", "format": "date-time", "description": "处理时间（后端填）" }
+        }
+      },
+      "ChatMessageSelectDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "sender": { "type": "string", "description": "发送者" },
+          "friendCode": { "type": "string", "description": "对方好友编码" },
+          "content": { "type": "string" },
+          "type": { "type": "string", "description": "消息类型" },
+          "readState": { "type": "integer" },
+          "revoked": { "type": "integer" },
+          "lastId": { "type": "integer", "format": "int64", "description": "游标分页，传 0 表示第一页" },
+          "pageSize": { "type": "integer" },
+          "revokedAt": { "type": "string", "format": "date-time" },
+          "createTime": { "type": "string", "format": "date-time" }
+        }
+      },
+      "GroupChatMessageSelectDto": {
+        "type": "object",
+        "properties": {
+          "groupCode": { "type": "string" },
+          "userCode": { "type": "string" },
+          "lastId": { "type": "integer", "format": "int64", "description": "游标分页，传 0 表示第一页" },
+          "pageSize": { "type": "integer" },
+          "message": { "type": "string" }
+        }
+      },
+      "ChangeUserAvatarurlDto": {
+        "type": "object",
+        "properties": {
+          "public_id": { "type": "string", "description": "用户编码" },
+          "avatarUrl": { "type": "string", "description": "新头像 URL" }
+        }
+      },
+      "KickDTO": {
+        "type": "object",
+        "properties": {
+          "public_id": { "type": "string", "description": "要踢下线用户的 public_id" }
+        }
+      },
+      "FriendRelationEntity": {
+        "type": "object",
+        "description": "好友关系",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "userCode": { "type": "string", "description": "自己的用户编码" },
+          "friendCode": { "type": "string", "description": "好友的用户编码" },
+          "status": { "type": "integer", "description": "1=正常, 2=拉黑, 3=已删除" },
+          "operatorCode": { "type": "string", "description": "拉黑/删除操作人，正常为 null" },
+          "createTime": { "type": "string", "format": "date-time" }
+        }
+      },
+      "FriendActionDTO": {
+        "type": "object",
+        "required": ["friendCode"],
+        "properties": {
+          "friendCode": { "type": "string", "description": "对方用户编码" }
+        }
+      }
+    }
+  },
+  "security": [
+    { "bearerAuth": [] }
+  ]
+}

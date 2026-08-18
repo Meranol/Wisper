@@ -2,6 +2,7 @@ package com.example.wisper_one.websocket.chat.handler;
 
 import com.example.wisper_one.usercontroller.mapper.UserMapper;
 import com.example.wisper_one.websocket.chat.POJO.ChatMessageEntity;
+import com.example.wisper_one.websocket.chat.friend.mapper.FriendRelationMapper;
 import com.example.wisper_one.websocket.chat.mapper.ChatMessageMapper;
 import com.example.wisper_one.websocket.util.GlobalWsSessionManager;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -71,6 +72,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     private ChatMessageMapper chatMessageMapper;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private FriendRelationMapper friendRelationMapper;
 
     private final ObjectMapper mapper = new ObjectMapper();
     @Resource
@@ -175,6 +178,16 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage(errorResp.toString()));
             return;
         }
+
+        // 拉黑/删除检查：status != 1（正常）时禁止发送
+        Integer relationStatus = friendRelationMapper.selectFriendStatus(fromUserCode, toUserCode);
+        if (relationStatus != null && relationStatus != 1) {
+            ObjectNode errorResp = mapper.createObjectNode();
+            errorResp.put("error", "发送失败：已被拉黑或删除，无法发送消息");
+            session.sendMessage(new TextMessage(errorResp.toString()));
+            return;
+        }
+
         chatMessageEntity.setReceiver(toUserCode);
         chatMessageEntity.setContent(content);
         chatMessageEntity.setType(type);

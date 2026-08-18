@@ -77,11 +77,10 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
 
 
         session.getAttributes().put("groupId", groupcode);
-        // 保存在线状态
+
         GROUP_ONLINE_USERS.putIfAbsent(groupcode, new ConcurrentHashMap<>());
         GROUP_ONLINE_USERS.get(groupcode).put(userCode, session);
 
-        // 获取离线未读消息
         List<ChatGroupMessageEntity> unreadMessages = chatGroupMessageMapper.selectUnreadMessages(groupcode, userCode);
 
         for (ChatGroupMessageEntity msg : unreadMessages) {
@@ -151,7 +150,6 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
         int rows = chatGroupMessageMapper.insert(msgEntity);
         if (rows != 1) throw new BusinessException("群消息写入失败");
 
-        //生成未读
 
         List<ChatGroupMemberEntity> members = chatGroupMapper.selectMembers(groupcode);
 
@@ -170,7 +168,6 @@ public class GroupChatWebSocketHandler extends TextWebSocketHandler {
 //            }
 //        }
 
-        //广播给送给在线🐔友
         Map<String, WebSocketSession> onlineUsers = GROUP_ONLINE_USERS.get(groupcode);
         if (onlineUsers != null) {
             for (Map.Entry<String, WebSocketSession> entry : onlineUsers.entrySet()) {

@@ -14,4 +14,28 @@
             (#{userCode},#{friendCode},#{status},#{createTime})
     </insert>
 
+    <update id="updateFriendStatus">
+        UPDATE friend_relation
+        SET status = #{status},
+            operator_code = #{operatorCode, jdbcType=VARCHAR}
+        WHERE (user_code = #{userCode} AND friend_code = #{friendCode})
+           OR (user_code = #{friendCode} AND friend_code = #{userCode})
+    </update>
+
+    <select id="selectFriendStatus" resultType="java.lang.Integer">
+        SELECT status
+        FROM friend_relation
+        WHERE (user_code = #{userCode} AND friend_code = #{friendCode})
+           OR (user_code = #{friendCode} AND friend_code = #{userCode})
+        LIMIT 1
+    </select>
+
+    <select id="selectRelation" resultType="com.example.wisper_one.websocket.chat.friend.POJO.FriendRelationEntity">
+        SELECT *
+        FROM friend_relation
+        WHERE (user_code = #{userCode} AND friend_code = #{friendCode})
+           OR (user_code = #{friendCode} AND friend_code = #{userCode})
+        LIMIT 1
+    </select>
+
 </mapper>

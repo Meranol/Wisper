@@ -37,7 +37,17 @@
     <update id="updateStatus" parameterType="com.example.wisper_one.websocket.chat.friend.POJO.FriendRequestEntity">
         UPDATE  friend_request set status = #{status},
                                    handle_time = #{handleTime}
-                                   WHERE id = #{id}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateFriendRequest" parameterType="com.example.wisper_one.websocket.chat.friend.POJO.FriendRequestEntity">
+        UPDATE friend_request
+        SET status = #{status},
+            create_time = #{createTime},
+            handle_time = #{handleTime, jdbcType=TIMESTAMP},
+            remark = #{remark, jdbcType=VARCHAR}
+        WHERE from_user_code = #{fromUserCode}
+          AND to_user_code = #{toUserCode}
     </update>
 
 </mapper>
