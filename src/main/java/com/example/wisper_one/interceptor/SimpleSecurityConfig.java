@@ -31,7 +31,7 @@ public class SimpleSecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/user/login", "/user/register").permitAll()
-                .antMatchers("/uploads/images/**").permitAll()
+                .antMatchers("/uploads/images/**", "/api/uploads/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(simpleJwtFilter, UsernamePasswordAuthenticationFilter.class);

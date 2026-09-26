@@ -1,6 +1,7 @@
 package com.example.wisper_one.userUpdata.ImageController;
 
 import com.example.wisper_one.utils.Exception.BusinessException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,29 +15,25 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * File: ImageUploadController
- * Author: [周玉诚]
- * Date: 2026/1/12
- * Description:
- */
 @RestController
 @RequestMapping("/api/upload")
+
 public class ImageUploadController {
 
+    // 从配置文件读取上传目录，如果没有则使用默认路径
+    @Value("${file.upload.dir:/home/admin/uploads}")
+    private String baseUploadDir;
 
     @PostMapping("/image")
-    public Map<String,Object> uploadImage(@RequestParam("file") MultipartFile file,
-                                            @RequestParam("type") String type
-    )
+    public Map<String, Object> uploadImage(@RequestParam("file") MultipartFile file,
+                                           @RequestParam("type") String type)
             throws IOException {
 
         if (file.isEmpty()) {
             throw new BusinessException("未传输图片~~");
         }
 
-        //提取图片后缀   requireNonNull确保上传文件不为空，是空直接报异常
-        // getOriginalFilename为获取原文件名称    substring是截取字符
+        // 提取图片后缀
         String ext = Objects.requireNonNull(file.getOriginalFilename())
                 .substring(file.getOriginalFilename().lastIndexOf("."));
 
@@ -46,38 +43,37 @@ public class ImageUploadController {
 
         String filename = UUID.randomUUID().toString().replace("-", "") + ext;
 
-
-        String baseDir = "E:/wisperimage/";
-
-        if ("user".equals(type)) {
-            baseDir += "user/";
-        }else if ("group".equals(type)) {
-            baseDir += "group/";
-        }else if ("chat".equals(type)) {
-            baseDir += "chat/";
-        }else if ("temp".equals(type)) {
-            baseDir += "temp/";
-        } else {
-            throw new BusinessException("非法上传类型");
+        // 根据类型创建子目录
+        String subDir;
+        switch (type) {
+            case "user":
+                subDir = "user/";
+                break;
+            case "group":
+                subDir = "group/";
+                break;
+            case "chat":
+                subDir = "chat/";
+                break;
+            case "temp":
+                subDir = "temp/";
+                break;
+            default:
+                throw new BusinessException("非法上传类型");
         }
-        File dir = new File(baseDir);
+
+        String fullDir = baseUploadDir + "/" + subDir;
+        File dir = new File(fullDir);
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
-
-        File saveFile = new File(baseDir + filename);
+        File saveFile = new File(fullDir + filename);
         file.transferTo(saveFile);
 
-
         Map<String, Object> result = new HashMap<>();
-        // 返回前端可访问的 URL
-        result.put("url", "/uploads/" + type + "/" + filename);
+        // 返回前端可访问的 URL（通过代理）
+        result.put("url", "/api/uploads/" + type + "/" + filename);
         return result;
-
-
     }
-
-
-
 }

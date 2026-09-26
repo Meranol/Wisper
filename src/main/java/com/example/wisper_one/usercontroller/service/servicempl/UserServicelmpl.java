@@ -39,6 +39,9 @@ public class UserServicelmpl implements UserService {
     private UserCodeService userCodeService;
     @Resource
     private UserAccountMapper accountMapper;
+
+
+
     @Transactional(rollbackFor = BusinessException.class)
     @Override
     public UserPo register(RegRequestDto regRequest) {

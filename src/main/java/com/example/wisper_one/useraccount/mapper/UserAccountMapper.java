@@ -16,15 +16,12 @@ import java.math.BigDecimal;
 public interface UserAccountMapper {
     UserAccountPO selectByUserCode(String userCode);
 
-    // 乐观锁更新余额
     int updateBalanceWithVersion(@Param("userCode") String userCode,
                                  @Param("amount") BigDecimal amount,
                                  @Param("version") Integer version);
 
-    // 插入账户
     int insert(UserAccountPO accountPO);
 
-    // 插入账户流水
     int insertAccountRecord(@Param("userCode") String userCode,
                             @Param("changeAmount") BigDecimal changeAmount,
                             @Param("type") String type,

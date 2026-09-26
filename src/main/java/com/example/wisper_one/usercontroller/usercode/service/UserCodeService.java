@@ -22,7 +22,8 @@ public class UserCodeService {
     public String generateUserCode() {
         int year = java.time.LocalDateTime.now().getYear();
 
-        UserCodeSeq seq = userCodeDao.findByYear(year);
+        // 关键改动：使用 FOR UPDATE 加锁查询
+        UserCodeSeq seq = userCodeDao.findByYearForUpdate(year);
 
         if (seq == null) {
             seq = new UserCodeSeq();

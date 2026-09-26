@@ -63,3 +63,8 @@ mybatis:
   type-aliases-package: com.example.wisper_one.Login.domain
   configuration:
     map-underscore-to-camel-case: true
+
+# 文件上传配置（放在最外层，与 spring、mybatis 平级）
+file:
+  upload:
+    dir: /home/admin/uploads

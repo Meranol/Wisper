@@ -157,7 +157,21 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         String toUserCode = json.get("to").asText();
         String content = json.get("msg").asText();
-        String type = json.has("type") ? json.get("type").asText() : "text";
+        String type = json.get("type").asText();
+
+        if ("image".equals(type)) {
+            // 验证图片 URL 格式
+            if (!content.startsWith("/api/uploads/") && !content.startsWith("http")) {
+                session.sendMessage(new TextMessage("图片格式错误"));
+                return;
+            }
+        } else {
+            // 文本消息验证
+            if (content.isEmpty() || content.length() > 2000) {
+                session.sendMessage(new TextMessage("消息内容不合法"));
+                return;
+            }
+        }
 
 
 

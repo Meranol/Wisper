@@ -33,7 +33,8 @@ public class GlobalCorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOriginPattern("http://localhost:5173"); // 允许所有域名
+        config.addAllowedOriginPattern("http://vvisper.xyz"); // 允许所有域名
+        config.addAllowedOriginPattern("http://localhost:5173");
         config.setAllowCredentials(true); // 允许携带 Cookie
         config.addAllowedMethod("*"); // 允许所有请求方法
         config.addAllowedHeader("*"); // 允许所有请求头

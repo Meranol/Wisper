@@ -56,7 +56,7 @@ public class SimpleJwtFilter extends OncePerRequestFilter {
         }
 
         // 这里放行上传的图片
-        if (path.startsWith("/uploads/")) {
+        if (path.startsWith("/uploads/")|| path.startsWith("/api/uploads/")) {
             chain.doFilter(request, response);
             return;
         }
